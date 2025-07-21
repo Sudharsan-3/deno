@@ -43,14 +43,13 @@ export const login = async (req, res) => {
     })
 
    
-    return res.status(200).json([{
+    return res.status(200).json({
       Name : user.name,
       Email :user.email,
       message: "Successfully logged in",      
-    },{
       token
     }
-  ]);
+  );
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({

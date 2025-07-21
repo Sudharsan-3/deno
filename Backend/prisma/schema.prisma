@@ -56,11 +56,28 @@ model Transaction {
   balance         Int?
   balanceType     String?
 
-  createdAt     DateTime @default(now())
-  createdById   Int
-  createdBy     User     @relation(fields: [createdById], references: [id])
+  type            String    @default("inuse") // [inuse | deleted]
 
-  // 🔽 New relation to track the Account
-  accountId     Int
-  account       Account  @relation(fields: [accountId], references: [id])
+  createdAt       DateTime  @default(now())
+  createdById     Int
+  createdBy       User      @relation(fields: [createdById], references: [id])
+
+  accountId       Int
+  account         Account   @relation(fields: [accountId], references: [id])
+
+  files           TransactionFile[] // Relation to new file table
 }
+
+model TransactionFile {
+  id            Int      @id @default(autoincrement())
+  fileName      String
+  fileType      String   // e.g., CSV, IMAGE, TEXT, EXCEL
+  filePath      String   // Or fileContent if storing as base64/blob
+  description   String?
+
+  createdAt     DateTime @default(now())
+
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id])
+}
+

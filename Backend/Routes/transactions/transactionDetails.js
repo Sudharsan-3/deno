@@ -5,6 +5,48 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Helper functions
+const parseAmount = (amountStr) => {
+  if (!amountStr) return 0;
+  const num = Number(amountStr.toString().replace(/,/g, ''));
+  return isNaN(num) ? 0 : num;
+};
+
+const parseDateTime = (dateTimeStr) => {
+  if (!dateTimeStr) return new Date();
+  try {
+    const [datePart, timePart] = dateTimeStr.toString().split(' ');
+    const [day, month, year] = datePart.split(/[/-]/);
+    if (!timePart) return new Date(`${year}-${month}-${day}`);
+    const [hours, minutes] = timePart.split(':');
+    return new Date(Date.UTC(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day),
+      parseInt(hours),
+      parseInt(minutes)
+    ));
+  } catch {
+    return new Date();
+  }
+};
+
+const parseDate = (dateStr) => {
+  if (!dateStr) return new Date();
+  try {
+    const [day, month, year] = dateStr.toString().split(/[/-]/);
+    return new Date(Date.UTC(
+      parseInt(year),
+      parseInt(month) - 1,
+      parseInt(day)
+    ));
+  } catch {
+    return new Date();
+  }
+};
+
+const cleanString = (str) => (str || '').toString().trim();
+
 export const transactionDetails = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
@@ -15,28 +57,16 @@ export const transactionDetails = async (req, res) => {
   const results = [];
 
   try {
-    // Get user ID from verified token (already authenticated via verifyToken)
-    const {userId,accountId} = req.body; 
+    const { userId, accountId } = req.body;
 
-    const checkUser = await prisma.user.findUnique({
-      where:{
-        id:Number(userId)
-      }
-    })
-    if(!checkUser){
-      res.status(404).json({
-        message:`No user found with the id : ${userId} `
-      })
-    }
-    const checkAcount = await prisma.account.findUnique({
-      where:{id:Number(accountId)}
-    })
+    // Verify user and account exist
+    const [user, account] = await Promise.all([
+      prisma.user.findUnique({ where: { id: Number(userId) } }),
+      prisma.account.findUnique({ where: { id: Number(accountId) } })
+    ]);
 
-    if(!checkAcount){
-      res.status(404).json({
-        message:`No account found with the id : ${accountId} `
-      })
-    }
+    if (!user) return res.status(404).json({ message: `User not found: ${userId}` });
+    if (!account) return res.status(404).json({ message: `Account not found: ${accountId}` });
 
     // Process file
     if (fileExt === 'csv') {
@@ -47,13 +77,12 @@ export const transactionDetails = async (req, res) => {
       throw new Error('Only CSV or Excel files are supported');
     }
 
-    // Validate we got results
     if (results.length === 0) {
       throw new Error('No valid transactions found in file');
     }
 
     // Transform and save data
-    const savedTransactions = await saveTransactions(results, userId,accountId);
+    const savedTransactions = await saveTransactions(results, userId, accountId);
 
     res.json({
       success: true,
@@ -69,90 +98,40 @@ export const transactionDetails = async (req, res) => {
       ...(process.env.NODE_ENV === 'development' && { stack: error.stack })
     });
   } finally {
-    // Cleanup
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     await prisma.$disconnect();
   }
 };
 
-// ======================
-// HELPER FUNCTIONS
-// ======================
+async function saveTransactions(transactions, userId, accountId) {
+  const transactionsToCreate = transactions.map(txn => {
+    // Debug: Show all available fields in the transaction
+    console.log('Transaction fields:', Object.keys(txn));
+    
+    // Get the DR/CR values - we need to verify the exact field names
+    const amountType = (txn['Dr / Cr'] || '').toString().trim().toUpperCase();
+    const balanceType = (txn['Balance Dr/Cr'] || txn['Dr / Cr.1'] || '').toString().trim().toUpperCase();
 
-async function saveTransactions(transactions, userId,accountId) {
-  const transactionsToCreate = transactions.map(txn => ({
-    slNo: parseInt(txn['Sl. No.']) || 0,
-    transactionDate: parseDateTime(txn['Transaction Date']),
-    valueDate: parseDate(txn['Value Date']),
-    description: cleanString(txn['Description']),
-    chequeOrRef: cleanString(txn['Chq / Ref No.']),
-    amount: parseAmount(txn['Amount']),
-    amountType: validateDrCr(txn['Dr / Cr']),
-    balance: parseAmount(txn['Balance']),
-    balanceType: validateDrCr(txn['Dr / Cr.1'] || txn['Dr / Cr']),
-    createdById: Number(userId),
-    accountId : Number(accountId)
-  }));
+    return {
+      slNo: parseInt(txn['Sl. No.']) || 0,
+      transactionDate: parseDateTime(txn['Transaction Date']),
+      valueDate: parseDate(txn['Value Date']),
+      description: cleanString(txn['Description']),
+      chequeOrRef: cleanString(txn['Chq / Ref No.']),
+      amount: parseAmount(txn['Amount']),
+      amountType: amountType === 'CR' ? 'CR' : 'DR', // Default to DR if not CR
+      balance: parseAmount(txn['Balance']),
+      balanceType: balanceType === 'DR' ? 'DR' : 'CR', // Default to CR if not DR
+      createdById: Number(userId),
+      accountId: Number(accountId)
+    };
+  });
 
   return await prisma.$transaction(
     transactionsToCreate.map(txn => 
       prisma.transaction.create({ data: txn })
     )
   );
-}
-
-function parseAmount(amountStr) {
-  if (!amountStr) return 0;
-  // Remove commas and decimals (e.g., "12,000.50" → 12000)
-  return parseInt(amountStr.toString().replace(/,/g, '').split('.')[0]) || 0;
-}
-
-function parseDateTime(dateTimeStr) {
-  if (!dateTimeStr) return new Date();
-  
-  try {
-    // Handle formats: "1/6/2025 18:19", "1-6-2025 18:19"
-    const [datePart, timePart] = dateTimeStr.toString().split(' ');
-    const [day, month, year] = datePart.split(/[/-]/);
-    
-    if (!timePart) return new Date(`${year}-${month}-${day}`);
-    
-    const [hours, minutes] = timePart.split(':');
-    return new Date(Date.UTC(
-      parseInt(year),
-      parseInt(month) - 1, // Months are 0-indexed
-      parseInt(day),
-      parseInt(hours),
-      parseInt(minutes)
-    ));
-  } catch {
-    return new Date();
-  }
-}
-
-function parseDate(dateStr) {
-  if (!dateStr) return new Date();
-  
-  try {
-    // Handle formats: "1/6/2025", "1-6-2025"
-    const [day, month, year] = dateStr.toString().split(/[/-]/);
-    return new Date(Date.UTC(
-      parseInt(year),
-      parseInt(month) - 1,
-      parseInt(day)
-    ));
-  } catch {
-    return new Date();
-  }
-}
-
-function validateDrCr(value) {
-  const normalized = (value || 'CR').toString().toUpperCase();
-  return normalized === 'DR' ? 'DR' : 'CR';
-}
-
-function cleanString(str) {
-  return (str || '').toString().trim();
 }
 
 async function processCSV(filePath, results) {
@@ -177,15 +156,18 @@ async function processCSV(filePath, results) {
           return reject(new Error('CSV headers not found. First row must contain "Sl. No." and "Transaction Date"'));
         }
 
-        // Second pass: Process data
+        // Second pass: Process data with proper column handling
         fs.createReadStream(filePath)
           .pipe(csv({ 
-            skipLines: skipLines - 1, // Account for header row
-            headers: headers,
-            strict: true // Ensure column count matches headers
+            skipLines: skipLines - 1,
+            headers: headers.map((header, index) => {
+              // Handle duplicate column names
+              const count = headers.slice(0, index).filter(h => h === header).length;
+              return count > 0 ? `${header}.${count}` : header;
+            }),
+            strict: true
           }))
           .on('data', (data) => {
-            // Skip empty/invalid rows
             if (!data['Sl. No.'] || isNaN(data['Sl. No.'])) return;
             if (data['Sl. No.'].toString().includes('Closing balance')) return;
             
@@ -220,14 +202,17 @@ async function processExcel(filePath, results) {
     throw new Error('Excel headers not found. First row must contain "Sl. No." and "Transaction Date"');
   }
 
-  // Process data rows
+  // Process data rows with duplicate column handling
   for (let i = headerRowIndex + 1; i < jsonData.length; i++) {
     const row = jsonData[i];
     if (!row || row[0]?.toString().includes('Closing balance')) break;
     
     const transaction = {};
     headers.forEach((header, idx) => {
-      transaction[header] = row[idx] !== undefined ? row[idx] : null;
+      // Handle duplicate columns
+      const count = headers.slice(0, idx).filter(h => h === header).length;
+      const key = count > 0 ? `${header}.${count}` : header;
+      transaction[key] = row[idx] !== undefined ? row[idx] : null;
     });
     
     if (transaction['Sl. No.'] && !isNaN(transaction['Sl. No.'])) {
@@ -235,4 +220,3 @@ async function processExcel(filePath, results) {
     }
   }
 }
-

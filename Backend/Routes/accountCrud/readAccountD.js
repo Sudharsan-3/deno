@@ -1,13 +1,29 @@
-import { PrismaClient } from "@prisma/client"
+import { PrismaClient } from "@prisma/client";
 
-export const readAccountD = async(req,res)=>{
-    const prisma = new PrismaClient()
-    try {
-        const resp = await prisma.account.findMany()
-         res.send(resp)
-    } catch (error) {
-        
-        
-    }
+
+const prisma = new PrismaClient();
+
+/**
+ * @desc Get all accounts from the database
+ * @route GET /api/accounts
+ * @access Public or Protected (based on your route setup)
+ */
+export const readAccountD = async (req, res) => {
+  try {
    
-}
+    const accounts = await prisma.account.findMany();
+
+    
+    res.status(200).json({
+      success: true,
+      data: accounts,
+    });
+  } catch (error) {
+    console.error("Error fetching accounts:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch accounts. Internal server error.",
+    });
+  }
+};
