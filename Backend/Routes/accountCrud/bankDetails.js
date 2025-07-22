@@ -20,7 +20,7 @@ export const bankDetails = async (req, res) => {
 
   try {
     // ✅ Validate required fields
-    if (!createdBy || !name || !address || !accountNo || !startDate ||!endDate || !branch || !ifsc || !micr) {
+    if (!createdBy || !name || !address || !accountNo || !branch || !ifsc || !micr) {
       return res.status(400).json({
         message: "❌ Missing required fields. Please ensure all mandatory fields are provided: createdBy, name, address, accountNo, period, branch, IFSC, MICR."
       });

@@ -28,8 +28,8 @@ model Account {
   ifsc          String
   micr          String
   // Removed: period
-  startDate     DateTime
-  endDate       DateTime
+  startDate     DateTime?
+  endDate       DateTime?
 
   custRelnNo     String? @default("None")
   currency       String? @default("INR")
