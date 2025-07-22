@@ -39,6 +39,7 @@ export const bankDetails = async (req, res) => {
         id
       }
     })
+    console.log(checkUser ,"new user")
 
     if(!checkUser){
       return res.status(404).json({
