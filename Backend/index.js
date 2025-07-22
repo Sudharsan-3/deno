@@ -45,7 +45,8 @@ import { search } from "./Routes/filter/search.js";
 import { history } from "./Routes/transactions/history.js";
 import { filter } from "./Routes/filter/filter.js";
 import uploadRoute from "./Routes/upload.js";
-import { getTransactionAttachments } from "./Routes/transactionFiles/getTransactionattachement.js";
+import { getTransactionAttachments } from "./Routes/transactionFiles/getTransactionAttachments.js";
+import { deleteAllTransaction } from "./Routes/transactions/deleteAllTransaction.js";
 
 
 app.post("/api/bankDetails", verifyToken, upload.single("file"), bankDetails);
@@ -60,7 +61,7 @@ app.use("/api/updateAccountD",verifyToken,updateAccountD)
 app.use("/api/transactions",verifyToken,getAllTransactions)
 
 app.use("/api/deleteMultipleTransactions",verifyToken,deleteMultipleTransactions)
-app.use("/api/deleteMultipleTransactions",verifyToken,deleteMultipleTransactions)
+app.use("/api/deleteAll",verifyToken,deleteAllTransaction)
 
 // Filters
 app.use("/api/filter",verifyToken,filter)
