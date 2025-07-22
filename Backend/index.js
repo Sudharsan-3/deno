@@ -3,6 +3,8 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import multer from "multer";
 
+
+
 dotenv.config();
 
 const app = express();
@@ -12,8 +14,10 @@ const PORT = process.env.PORT || 5000;
 const upload = multer({ dest: 'uploads/' });
 
 // Middleware
+app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
 
 // 🔐 Auth Middleware
 import { verifyToken } from "./Routes/auth/verifyToken.js";
@@ -38,6 +42,10 @@ import { restoreTransactionById } from "./Routes/transactions/restoreTransaction
 import { deleteMultipleTransactions } from "./Routes/transactions/deleteMultipleTransactions.js";
 import { updateAccountD } from "./Routes/accountCrud/updateAccountD.js";
 import { search } from "./Routes/filter/search.js";
+import { history } from "./Routes/transactions/history.js";
+import { filter } from "./Routes/filter/filter.js";
+import uploadRoute from "./Routes/upload.js";
+
 
 app.post("/api/bankDetails", verifyToken, upload.single("file"), bankDetails);
 app.post("/api/transactionDetails", verifyToken, upload.single("file"), transactionDetails);
@@ -53,6 +61,10 @@ app.use("/api/transactions",verifyToken,getAllTransactions)
 app.use("/api/deleteMultipleTransactions",verifyToken,deleteMultipleTransactions)
 app.use("/api/deleteMultipleTransactions",verifyToken,deleteMultipleTransactions)
 
+// Filters
+app.use("/api/filter",verifyToken,filter)
+app.use("/api/history",verifyToken,history)
+
 // Restore By id
 app.use("/api/restoretransactionById",verifyToken,restoreTransactionById)
 
@@ -67,6 +79,10 @@ app.use("/api/export/excel",verifyToken,exportTransactionsExcel)
 // Filter endpoints
 
 app.use("/api/search",verifyToken,search)
+
+// Upload attachements
+app.use("/uploads", express.static("uploads")); // Serve uploaded files
+app.use("/api/upload", uploadRoute);
 
 
 // 🚀 Start Server
