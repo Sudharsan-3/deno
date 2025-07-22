@@ -14,6 +14,7 @@ export const filter = async (req, res) => {
     tt,            // amountType (credit/debit)
     attachment,
   } = req.body;
+  console.log(req.body)
 
   try {
     // Step 1: Fetch all inuse transactions with files
@@ -85,22 +86,25 @@ export const filter = async (req, res) => {
         ? e.amountType?.toLowerCase() === tt.toLowerCase()
         : true;
 
-      const attachmentMatch = attachment
-        ? e.files?.some(
-            (file) =>
-              file.fileName?.toLowerCase().includes(attachment.toLowerCase()) ||
-              file.description?.toLowerCase().includes(attachment.toLowerCase())
-          )
+        const attachmentMatch = attachment
+        ? attachment === "true"
+          ? e.files && e.files.length > 0
+          : e.files?.some(
+              (file) =>
+                file.fileName?.toLowerCase().includes(attachment.toLowerCase()) ||
+                file.description?.toLowerCase().includes(attachment.toLowerCase())
+            )
         : true;
+      
 
       const creditMatch =
-        e.amountType?.toLowerCase() === "credit"
+        e.amountType?.toLowerCase() === "cr"
           ? (crMin === undefined || e.amount >= crMin) &&
             (crMax === undefined || e.amount <= crMax)
           : true;
 
       const debitMatch =
-        e.amountType?.toLowerCase() === "debit"
+        e.amountType?.toLowerCase() === "dr"
           ? (dbMin === undefined || e.amount >= dbMin) &&
             (dbMax === undefined || e.amount <= dbMax)
           : true;

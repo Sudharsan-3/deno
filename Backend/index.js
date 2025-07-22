@@ -45,6 +45,7 @@ import { search } from "./Routes/filter/search.js";
 import { history } from "./Routes/transactions/history.js";
 import { filter } from "./Routes/filter/filter.js";
 import uploadRoute from "./Routes/upload.js";
+import { getTransactionAttachments } from "./Routes/transactionFiles/getTransactionattachement.js";
 
 
 app.post("/api/bankDetails", verifyToken, upload.single("file"), bankDetails);
@@ -82,7 +83,11 @@ app.use("/api/search",verifyToken,search)
 
 // Upload attachements
 app.use("/uploads", express.static("uploads")); // Serve uploaded files
-app.use("/api/upload", uploadRoute);
+app.use("/api/upload",verifyToken, uploadRoute);
+
+// Read attachements
+
+app.use("/api/attachement" ,verifyToken,getTransactionAttachments)
 
 
 // 🚀 Start Server
