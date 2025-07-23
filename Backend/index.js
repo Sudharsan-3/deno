@@ -33,7 +33,7 @@ app.use("/api/login", login);
 // Legacy CSV-only Bank/Transaction (optional)
 import { bankDetails } from "./routes/account/bankDetails.js";
 import { transactionDetails } from "./routes/transactions/transactionDetails.js";
-import { readAccountD } from "./routes/account/readAccountD.js";
+import { readAccountD } from "./routes/account/readAccountDetails.js";
 import { getAllTransactions } from "./routes/transactions/readTransaction.js";
 import { transactionSummary } from "./routes/apiSummary/transactionSummary.js";
 import { exportTransactionsCSV } from "./routes/apiSummary/exportTransactionsCSV.js";
