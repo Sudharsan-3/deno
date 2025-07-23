@@ -1,4 +1,5 @@
 import express from "express";
+// Initialize Prisma Client
 import { PrismaClient } from "@prisma/client";
 import upload from "./middlewares/upload.js"; // default import now
 

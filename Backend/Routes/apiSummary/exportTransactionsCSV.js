@@ -4,7 +4,7 @@ import { Parser } from "json2csv";
 
 const prisma = new PrismaClient();
 
-// ✅ CSV Export
+// CSV Export
 export const exportTransactionsCSV = async (req, res) => {
   try {
     const transactions = await prisma.transaction.findMany();

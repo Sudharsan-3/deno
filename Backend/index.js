@@ -23,27 +23,27 @@ app.use(bodyParser.json());
 import { verifyToken } from "./routes/auth/verifyToken.js";
 
 // 🔐 Auth Routes
-import { register } from "./routes/register/register.js";
-import { login } from "./routes/login/login.js";
+import { register } from "./routes/auth/register.js";
+import { login } from "./routes/auth/login.js";
 app.use("/api/register", register);
 app.use("/api/login", login);
 
 
 
 // 🏦 Legacy CSV-only Bank/Transaction (optional)
-import { bankDetails } from "./routes/accountCrud/bankDetails.js";
+import { bankDetails } from "./routes/account/bankDetails.js";
 import { transactionDetails } from "./routes/transactions/transactionDetails.js";
-import { readAccountD } from "./routes/accountCrud/readAccountD.js";
+import { readAccountD } from "./routes/account/readAccountD.js";
 import { getAllTransactions } from "./routes/transactions/readTransaction.js";
 import { transactionSummary } from "./routes/apiSummary/transactionSummary.js";
-import { exportTransactionsCSV } from "./routes/export/exportTransactionsCSV.js";
-import { exportTransactionsExcel } from "./routes/export/exportTransactionsExcel.js";
+import { exportTransactionsCSV } from "./routes/apiSummary/exportTransactionsCSV.js";
+import { exportTransactionsExcel } from "./routes/apiSummary/exportTransactionsExcel.js";
 import { restoreTransactionById } from "./routes/transactions/restoreTransactionById.js";
 import { deleteMultipleTransactions } from "./routes/transactions/deleteMultipleTransactions.js";
-import { updateAccountD } from "./routes/accountCrud/updateAccountD.js";
-import { search } from "./routes/filter/search.js";
+import { updateAccountD } from "./routes/account/updateAccountDetails.js";
+import { search } from "./routes/apiSummary/search.js";
 import { history } from "./routes/transactions/history.js";
-import { filter } from "./routes/filter/filter.js";
+import { filter } from "./routes/apiSummary/filter.js";
 import uploadRoute from "./routes/upload.js";
 import { getTransactionAttachments } from "./routes/transactions/getTransactionAttachments.js";
 import { deleteAllTransaction } from "./routes/transactions/deleteAllTransaction.js";

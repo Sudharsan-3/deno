@@ -12,6 +12,15 @@ export const transactionSummary = async (req, res) => {
       }
     });
 
+    // If no data in db it shows this
+
+    if(transactions.length ===0){
+      return res.status(404).json({
+        success : false,
+        message : "Mo data was founded in transaction"
+      })
+    }
+
     let totalIncome = 0;
     let totalExpense = 0;
     let totalBalance = 0;
@@ -19,6 +28,8 @@ export const transactionSummary = async (req, res) => {
     transactions.forEach((txn) => {
       const amount = txn.amount || 0;
       const balance = txn.balance || 0;
+
+      // In this we are seprating our transaction by credited,debited and balance
 
       if (txn.amountType?.toLowerCase() === 'cr') {
         totalIncome += amount;

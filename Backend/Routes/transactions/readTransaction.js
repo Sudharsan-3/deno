@@ -1,17 +1,22 @@
 import { PrismaClient } from "@prisma/client";
 
-
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc   Fetch all transactions from the database
- * @route  GET /api/transactions
- * @access Public (or add middleware for protection)
- */
+
 export const getAllTransactions = async (req, res) => {
   try {
     
     const transactions = await prisma.transaction.findMany();
+
+    // Here we are Get and check is there any transaction is found in db
+
+    if(transactions.length === 0){
+      return res.status(404).json({
+        success :false,
+        message : "No transaction found"
+      })
+    }
 
     const getInuseDatas = transactions.filter(e => e.type.toLowerCase() === "inuse" )
 
