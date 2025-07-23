@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
-const prisma = new PrismaClient(); // Reuse this if you're using it across files
+// Initialize Prisma Client
+const prisma = new PrismaClient(); 
 
 export const history = async (req, res) => {
   try {
@@ -14,6 +15,7 @@ export const history = async (req, res) => {
         },
       },
     });
+    
 
     if (deletedTransactions.length === 0) {
       return res.status(404).json({

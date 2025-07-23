@@ -1,13 +1,11 @@
 import { PrismaClient } from "@prisma/client";
+
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc    Delete all transactions (use with caution)
- * @route   DELETE /api/transactions/delete-all
- * @access  Admin (recommended to protect this route)
- */
 export const deleteAllTransaction = async (req, res) => {
   try {
+    // Here we are deleting all the data in transaction
     const result = await prisma.transaction.deleteMany();
 
     return res.status(200).json({

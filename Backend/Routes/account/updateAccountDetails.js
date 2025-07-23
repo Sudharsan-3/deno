@@ -1,13 +1,10 @@
 import { PrismaClient } from "@prisma/client";
-
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc    Update account details
- * @route   PUT /api/accounts/update
- * @access  Protected (add auth if needed)
- */
+
 export const updateAccountD = async (req, res) => {
+   // Destructure request body to extract required fields
   const {
     id,
     createdById,
@@ -23,7 +20,7 @@ export const updateAccountD = async (req, res) => {
     micr,
   } = req.body;
 
-  // ✅ Validate required input
+  // Validate required input
   if (!id || isNaN(Number(id))) {
     return res.status(400).json({
       success: false,
@@ -32,7 +29,7 @@ export const updateAccountD = async (req, res) => {
   }
 
   try {
-    // 🔍 Check if the account exists
+    // Check if the account exists
     const existingAccount = await prisma.account.findUnique({
       where: { id: Number(id) },
     });
@@ -44,7 +41,7 @@ export const updateAccountD = async (req, res) => {
       });
     }
 
-    // 🛠 Update account with fallback values
+    // Update account with fallback values
     const updatedAccount = await prisma.account.update({
       where: { id: Number(id) },
       data: {

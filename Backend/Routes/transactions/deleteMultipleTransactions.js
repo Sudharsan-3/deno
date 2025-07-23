@@ -1,11 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc    Soft delete multiple transactions by IDs
- * @route   PUT /api/transactions/bulk-delete
- * @access  Public (add auth if needed)
- */
+
 export const deleteMultipleTransactions = async (req, res) => {
   const { ids } = req.body;
 
@@ -28,6 +26,8 @@ export const deleteMultipleTransactions = async (req, res) => {
         type: "delete", // Mark as deleted instead of removing
       },
     });
+
+    // Here we are conforming that the give id are present in the db to delete multiple data at a time
 
     if (result.count === 0) {
       return res.status(404).json({

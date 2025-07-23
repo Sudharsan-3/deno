@@ -19,6 +19,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// ✅ Export the configured multer instance (not a function)
+// Export the configured multer instance (not a function)
 const upload = multer({ storage });
 export default upload;

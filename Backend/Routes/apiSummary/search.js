@@ -1,13 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc    Search transactions by description, reference, amount type or balance type
- * @route   POST /api/transactions/search
- * @access  Protected (optional)
- */
 export const search = async (req, res) => {
+     // Destructure request body to extract required fields
     const { userSearch } = req.body;
 
     if (!userSearch || typeof userSearch !== "string") {
@@ -18,8 +15,16 @@ export const search = async (req, res) => {
     }
 
     try {
+        // Getting data from db to search
         const allTransactions = await prisma.transaction.findMany();
 
+        if(allTransactions.length === 0){
+            res.status(404).json({
+                success :false,
+                message : "There is no data to search"
+            })
+        }
+        //  We making the user input to toLowerCase and we compare that with the db data
         const lowerSearch = userSearch.toLowerCase();
 
         const filtered = allTransactions.filter((t) => {

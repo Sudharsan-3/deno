@@ -3,6 +3,7 @@ import csv from 'csv-parser';
 import XLSX from 'xlsx';
 import { PrismaClient } from '@prisma/client';
 
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 // Helper functions

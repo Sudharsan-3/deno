@@ -1,11 +1,8 @@
 import { PrismaClient } from "@prisma/client";
+
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
-/**
- * @desc    Restore a soft-deleted transaction by setting type to "inuse"
- * @route   PATCH /api/transactions/restore
- * @access  Protected (optional middleware)
- */
 export const restoreTransactionById = async (req, res) => {
   const { id } = req.body;
 

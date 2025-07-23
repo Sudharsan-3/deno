@@ -1,10 +1,12 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
-export const register = async (req, res) => {
+// Initialize Prisma Client
   const prisma = new PrismaClient();
-  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS,10);
+export const register = async (req, res) => {
 
+  const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS,10);
+   // Destructure request body to extract required fields
 
   const {name, email, password } = req.body;
 
@@ -16,6 +18,7 @@ export const register = async (req, res) => {
   }
 
   try {
+  //  Here we are checking the user email bacause we are not allowing a same email to create multiple account
     
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -28,6 +31,9 @@ export const register = async (req, res) => {
         message: "Email already exists",
       });
     }
+
+    // Here we are encrypting our password to ensure the privacy and store the data in db
+
     const hashedPawword = await bcrypt.hash(password,saltRounds);
 
     

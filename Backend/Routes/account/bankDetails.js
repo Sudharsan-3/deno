@@ -1,8 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 
+// Initialize Prisma Client
+
 const prisma = new PrismaClient();
 
+// Export async function to handle bank details submission
 export const bankDetails = async (req, res) => {
+   // Destructure request body to extract required fields
   const {
     createdBy,
     name,
@@ -16,31 +20,33 @@ export const bankDetails = async (req, res) => {
     ifsc,
     micr
   } = req.body;
-  console.log(req.body)
+ 
 
   try {
-    // ✅ Validate required fields
+    // Validate required fields
     if (!createdBy || !name || !address || !accountNo || !branch || !ifsc || !micr) {
       return res.status(400).json({
-        message: "❌ Missing required fields. Please ensure all mandatory fields are provided: createdBy, name, address, accountNo, period, branch, IFSC, MICR."
+        message: "Missing required fields. Please ensure all mandatory fields are provided: createdBy, name, address, accountNo, period, branch, IFSC, MICR."
       });
     }
 
+     // Convert createdBy to a number and validate
     const id = Number(createdBy);
     if (isNaN(id)) {
       return res.status(400).json({
-        message: "❌ Invalid user ID (createdBy). Must be a valid number."
+        message: "Invalid user ID (createdBy). Must be a valid number."
       });
     }
 
+     // Check if the user exists in the database
    
     const checkUser = await prisma.user.findUnique({
       where:{
         id
       }
     })
-    console.log(checkUser ,"new user")
 
+    // If user is not found, return a 404 response
     if(!checkUser){
       return res.status(404).json({
         message : "The user id is not valid"
@@ -52,6 +58,7 @@ export const bankDetails = async (req, res) => {
         accountNo
       }
     })
+    // Check if the account number already exists
 
     if(checkAccNo){
       return res.status(409).json({
@@ -60,7 +67,7 @@ export const bankDetails = async (req, res) => {
 
     } 
 
-    // ✅ Create a new Account and associate with existing User
+    // Create a new Account and associate with existing User
     const resp = await prisma.account.create({
       data: {
         createdById: id,
@@ -77,18 +84,18 @@ export const bankDetails = async (req, res) => {
       }
     });
 
-    // ✅ Success response
+    // Success response
     return res.status(201).json({
-      message: "✅ Bank details stored successfully.",
+      message: "Bank details stored successfully.",
       command: "POST /bank-details",
       inserted: resp
     });
 
   } catch (error) {
-    console.error("❌ Error inserting bank details:", error);
+    console.error("Error inserting bank details:", error);
 
     return res.status(500).json({
-      message: "❌ Internal server error. Could not store bank details.",
+      message: "Internal server error. Could not store bank details.",
       command: "POST /bank-details",
       error: error.message
     });
