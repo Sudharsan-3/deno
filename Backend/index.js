@@ -19,10 +19,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 
-// 🔐 Auth Middleware
+//  Auth Middleware
 import { verifyToken } from "./routes/auth/verifyToken.js";
 
-// 🔐 Auth Routes
+// Auth Routes
 import { register } from "./routes/auth/register.js";
 import { login } from "./routes/auth/login.js";
 app.use("/api/register", register);
@@ -30,7 +30,7 @@ app.use("/api/login", login);
 
 
 
-// 🏦 Legacy CSV-only Bank/Transaction (optional)
+// Legacy CSV-only Bank/Transaction (optional)
 import { bankDetails } from "./routes/account/bankDetails.js";
 import { transactionDetails } from "./routes/transactions/transactionDetails.js";
 import { readAccountD } from "./routes/account/readAccountD.js";
@@ -91,7 +91,7 @@ app.use("/api/upload",verifyToken, uploadRoute);
 app.use("/api/attachement" ,verifyToken,getTransactionAttachments)
 
 
-// 🚀 Start Server
+//  Start Server
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
