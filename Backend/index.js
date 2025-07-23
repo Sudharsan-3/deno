@@ -20,33 +20,33 @@ app.use(bodyParser.json());
 
 
 // 🔐 Auth Middleware
-import { verifyToken } from "./Routes/auth/verifyToken.js";
+import { verifyToken } from "./routes/auth/verifyToken.js";
 
 // 🔐 Auth Routes
-import { register } from "./Routes/register/register.js";
-import { login } from "./Routes/login/login.js";
+import { register } from "./routes/register/register.js";
+import { login } from "./routes/login/login.js";
 app.use("/api/register", register);
 app.use("/api/login", login);
 
 
 
 // 🏦 Legacy CSV-only Bank/Transaction (optional)
-import { bankDetails } from "./Routes/accountCrud/bankDetails.js";
-import { transactionDetails } from "./Routes/transactions/transactionDetails.js";
-import { readAccountD } from "./Routes/accountCrud/readAccountD.js";
-import { getAllTransactions } from "./Routes/transactions/readTransaction.js";
-import { transactionSummary } from "./Routes/apiSummary/transactionSummary.js";
-import { exportTransactionsCSV } from "./Routes/export/exportTransactionsCSV.js";
-import { exportTransactionsExcel } from "./Routes/export/exportTransactionsExcel.js";
-import { restoreTransactionById } from "./Routes/transactions/restoreTransactionById.js";
-import { deleteMultipleTransactions } from "./Routes/transactions/deleteMultipleTransactions.js";
-import { updateAccountD } from "./Routes/accountCrud/updateAccountD.js";
-import { search } from "./Routes/filter/search.js";
-import { history } from "./Routes/transactions/history.js";
-import { filter } from "./Routes/filter/filter.js";
-import uploadRoute from "./Routes/upload.js";
-import { getTransactionAttachments } from "./Routes/transactionFiles/getTransactionAttachments.js";
-import { deleteAllTransaction } from "./Routes/transactions/deleteAllTransaction.js";
+import { bankDetails } from "./routes/accountCrud/bankDetails.js";
+import { transactionDetails } from "./routes/transactions/transactionDetails.js";
+import { readAccountD } from "./routes/accountCrud/readAccountD.js";
+import { getAllTransactions } from "./routes/transactions/readTransaction.js";
+import { transactionSummary } from "./routes/apiSummary/transactionSummary.js";
+import { exportTransactionsCSV } from "./routes/export/exportTransactionsCSV.js";
+import { exportTransactionsExcel } from "./routes/export/exportTransactionsExcel.js";
+import { restoreTransactionById } from "./routes/transactions/restoreTransactionById.js";
+import { deleteMultipleTransactions } from "./routes/transactions/deleteMultipleTransactions.js";
+import { updateAccountD } from "./routes/accountCrud/updateAccountD.js";
+import { search } from "./routes/filter/search.js";
+import { history } from "./routes/transactions/history.js";
+import { filter } from "./routes/filter/filter.js";
+import uploadRoute from "./routes/upload.js";
+import { getTransactionAttachments } from "./routes/transactions/getTransactionAttachments.js";
+import { deleteAllTransaction } from "./routes/transactions/deleteAllTransaction.js";
 
 
 app.post("/api/bankDetails", verifyToken, upload.single("file"), bankDetails);

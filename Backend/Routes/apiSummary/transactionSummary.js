@@ -1,7 +1,10 @@
 import { PrismaClient } from "@prisma/client";
+
+// Initialize Prisma Client
 const prisma = new PrismaClient();
 
 export const transactionSummary = async (req, res) => {
+  // Filtering the transaction type deleted or inuse
   try {
     const transactions = await prisma.transaction.findMany({
       where: {

@@ -1,6 +1,6 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-import upload from "../Routes/middlewares/upload.js"; // default import now
+import upload from "./middlewares/upload.js"; // default import now
 
 const router = express.Router();
 const prisma = new PrismaClient();
