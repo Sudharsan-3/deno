@@ -34,7 +34,7 @@ import { updateAccountD } from "../account/updateAccountDetails.js";
 import { search } from "../apiSummary/search.js";
 import { history } from "../transactions/history.js";
 import { filter } from "../apiSummary/filter.js";
-import uploadRoute from "./upload.js";
+import uploadRoute from "../transactions/upload.js";
 import { getTransactionAttachments } from "../transactions/getTransactionAttachments.js";
 import { deleteAllTransaction } from "../transactions/deleteAllTransaction.js";
 
