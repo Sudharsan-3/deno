@@ -10,11 +10,11 @@ const upload = multer({ dest: 'uploads/' });
 
 
 //  Auth Middleware
-import { verifyToken } from "../auth/verifyToken.js";
+import { verifyToken } from "../middlewares/verifyToken.js";
 
 // Auth Routes
-import { register } from "../auth/register.js";
-import { login } from "../auth/login.js";
+import { register } from "../user/register.js";
+import { login } from "../user/login.js";
 router.use("/register", register);
 router.use("/login", login);
 
