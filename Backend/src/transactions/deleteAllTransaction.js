@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 export const deleteAllTransaction = async (req, res) => {
   try {
     // Here we are deleting all the data in transaction
+    await prisma.transactionFile.deleteMany();
     const result = await prisma.transaction.deleteMany();
+    
 
     return res.status(200).json({
       success: true,
