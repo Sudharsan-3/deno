@@ -44,7 +44,7 @@ export const login = async (req, res) => {
     // If user entered correct email and password  giveing him/she a token to access the Content
 
     const token =  jwt.sign({id:user.id,name:user.name,email:user.email},secretKey,{
-      expiresIn:"24hr"
+      expiresIn:"100hr"
     })
 
    
