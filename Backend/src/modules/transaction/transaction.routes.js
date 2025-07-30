@@ -1,6 +1,11 @@
 import express from "express";
 import { verifyToken } from "../../middlewares/verifyToken.js";
 import { transactionController } from "./index.js";
+import multer from 'multer';
+import uploads  from "../../middlewares/upload.js"; // Your multer config
+
+const upload = multer({ dest: 'uploads/' });
+
 
 const router = express.Router();
 
@@ -16,5 +21,10 @@ router.post("/search",verifyToken,transactionController.transactionSearch)
 router.post("/filter",verifyToken,transactionController.transactionFilter)
 
 router.get("/export/csv",verifyToken,transactionController.exportCSV)
+router.get("/export/excel",verifyToken,transactionController.exportExcel)
+
+router.post('/import/transactions',verifyToken,upload.single('file'), transactionController.importTransactions);
+
+router.post("/upload/attachemants",verifyToken,uploads.array("files", 10),verifyToken, transactionController.uploadTransactionFiles);
 
 export default router;  

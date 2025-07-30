@@ -1,4 +1,4 @@
-import { transactionService } from "./index.js"
+import { transactionRepository, transactionService } from "./index.js"
 
 // Get transactions
 export const getTransaction = async(req,res,next)=>{
@@ -73,6 +73,7 @@ export const deleteAllTransacions = async(req,res,next)=>{
 export const restoreTransaction = async(req,res,next)=>{
     try {
         const {id} = req.body;
+        console.log(req.body)
         if(!id) {
             return res.status(400).json({
                 success : false,
@@ -196,5 +197,62 @@ export const exportCSV = async(req,res,next)=>{
     }
 
 }
+
+//  export excel
+export const exportExcel = async (req, res, next) => {
+  try {
+    const workbook = await transactionService.exportExcel();
+
+    if (!workbook) {
+      return res.status(404).json({
+        success: false,
+        message: "No data to export as Excel",
+      });
+    }
+
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", "attachment; filename=transactions.xlsx");
+
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Import transactions files like CSV or Excel
+
+
+export const importTransactions = async (req, res) => {
+  await transactionService.handleTransactionImport(req, res);
+};
+
+
+// import transaction attachments 
+
+
+export const uploadTransactionFiles = async (req, res) => {
+  console.log(req.body)
+  const { transactionId, description } = req.body;
+  const files = req.files;
+
+  try {
+    const result = await transactionService.uploadFiles(transactionId, files, description);
+    res.status(200).json({
+      success: true,
+      message: "Files uploaded and saved",
+      data: result,
+    });
+  } catch (error) {
+    console.error("Upload error:", error);
+    res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};
 
 

@@ -20,5 +20,5 @@ const storage = multer.diskStorage({
 });
 
 // Export the configured multer instance (not a function)
-const upload = multer({ storage });
-export default upload;
+const uploads = multer({ storage });
+export default uploads;

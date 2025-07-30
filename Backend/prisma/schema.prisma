@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // output = "../generated/prisma"
 }
 
 datasource db {
@@ -27,7 +26,6 @@ model Account {
   branch        String
   ifsc          String
   micr          String
-  // Removed: period
   startDate     DateTime?
   endDate       DateTime?
 
@@ -65,7 +63,7 @@ model Transaction {
   accountId       Int
   account         Account   @relation(fields: [accountId], references: [id])
 
-  files           TransactionFile[] // Relation to new file table
+  files           TransactionFile[]
 }
 
 model TransactionFile {
@@ -78,6 +76,5 @@ model TransactionFile {
   createdAt     DateTime @default(now())
 
   transactionId Int
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }
-
