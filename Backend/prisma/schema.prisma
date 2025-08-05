@@ -19,10 +19,10 @@ model User {
 }
 
 model Account {
-  id            Int    @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   name          String
   address       String
-  accountNo     String @unique
+  accountNo     String   @unique
   branch        String
   ifsc          String
   micr          String
@@ -35,12 +35,13 @@ model Account {
   nomineeName    String? @default("None")
   jointHolders   String? @default("None")
 
-  createdAt   DateTime @default(now())
-  createdById Int
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+  createdById   Int
+  createdBy     User     @relation(fields: [createdById], references: [id])
 
-  transactions Transaction[]
+  transactions  Transaction[]
 }
+
 
 model Transaction {
   id              Int       @id @default(autoincrement())

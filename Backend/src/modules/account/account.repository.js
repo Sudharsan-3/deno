@@ -1,5 +1,15 @@
 import prisma from "../prisma/prismaClient.js";
 
+// account by user id
+
+export const accountByUser = async(id)=>{
+    return await prisma.account.findMany({
+        where :{
+            createdById : Number(id)
+        }
+    })
+}
+
 // Account by accountNo
 
 export const findUnique = async(accountNo)=>{
@@ -12,7 +22,7 @@ export const findUnique = async(accountNo)=>{
 
 // Store accountDetail in db using prisma
 export const create = async (
-    createdBy,
+    createdById,
     name,
     address,
     custRelnNo,
@@ -23,19 +33,20 @@ export const create = async (
     branch,
     ifsc,
     micr) => {
-        
+        console.log(createdById)
     return prisma.account.create({
-        createdBy,
+        data :{
+        createdById:Number(createdById),
         name,
         address,
         custRelnNo,
         accountNo,
-        startDate,
-        endDate,
+        startDate: startDate ? new Date(startDate) : null,
+        endDate: endDate ? new Date(endDate) : null,
         currency,
         branch,
         ifsc,
-        micr
+        micr}
     })
 }
 

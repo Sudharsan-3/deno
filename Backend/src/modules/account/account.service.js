@@ -1,8 +1,20 @@
 import { accountRepository } from "./index.js";
 
+// Account by user 
+
+export const getAccountByUser = async({id})=>{
+
+        const data = await accountRepository.accountByUser(id)
+        if(!data){
+            return null
+        }
+        return data
+}
+
+
 // Create new account details
 export const accountDetail = async ({
-    createdBy,
+    createdById,
     name,
     address,
     custRelnNo,
@@ -18,13 +30,14 @@ export const accountDetail = async ({
     const checkAccNo = await accountRepository.findUnique(accountNo)
     
     if(checkAccNo){
-        const error  = new Error ("The account number you entered is already inuse")
-        error.statusCode = 409;
-        throw error
+       return null
+        // const error  = new Error ("The account number you entered is already inuse")
+        // error.statusCode = 409;
+        // throw error
     }
     
-    const newAccount = await accountRepository.create({
-    createdBy,
+    const newAccount = await accountRepository.create(
+    createdById,
     name,
     address,
     custRelnNo,
@@ -35,7 +48,7 @@ export const accountDetail = async ({
     branch,
     ifsc,
     micr
-    })
+    )
     return{
         newAccount
     }
