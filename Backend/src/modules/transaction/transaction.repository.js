@@ -1,8 +1,54 @@
 import prisma from "../prisma/prismaClient.js"
 
+// update transaction
+
+export const updateTransactionById = async (id, data) => {
+  // Build updateData with only provided fields
+  const updateData = {};
+
+  if (data.transactionDate !== undefined) updateData.transactionDate = data.transactionDate;
+  if (data.valueDate !== undefined) updateData.valueDate = data.valueDate;
+  if (data.description !== undefined) updateData.description = data.description;
+  if (data.chequeOrRef !== undefined) updateData.chequeOrRef = data.chequeOrRef;
+  if (data.amount !== undefined) updateData.amount = Number(data.amount);
+  if (data.amountType !== undefined) updateData.amountType = data.amountType;
+  if (data.balance !== undefined) updateData.balance = Number(data.balance);
+  if (data.balanceType !== undefined) updateData.balanceType = data.balanceType;
+  if (data.changeReason !== undefined) updateData.changeReason = data.changeReason;
+  if (data.invoice !== undefined) updateData.invoice = data.invoice;
+
+  // Now update only with fields that exist in updateData
+  return prisma.transaction.update({
+    where: { id: Number(id) },
+    data: updateData
+  });
+};
 
 
-// Get all and deleted transactions from db 
+export const createTransactionSnapshot = async (transaction, createdById, reason) => {
+  return prisma.transactionSnapshot.create({
+    data: {
+      transactionId: transaction.id,
+      slNo: transaction.slNo,
+      transactionDate: transaction.transactionDate,
+      valueDate: transaction.valueDate,
+      description: transaction.description,
+      chequeOrRef: transaction.chequeOrRef,
+      amount: Number(transaction.amount),
+      amountType: transaction.amountType,
+      balance: transaction.balance,
+      balanceType: transaction.balanceType,
+      type: transaction.type,
+      changedById: Number(createdById),
+      changeReason: reason || null,
+      invoice : transaction.invoice
+    }
+  });
+};
+
+
+
+// Get all transactions from db 
 
 export const getAllTransactionInuse = async () => {
   return prisma.transaction.findMany({
@@ -11,6 +57,9 @@ export const getAllTransactionInuse = async () => {
         equals: "inuse",
         mode: 'insensitive'
       }
+    },
+    include: {
+      files: true,
     },
     orderBy: {
       id: 'asc', // ascending order by id
@@ -46,9 +95,9 @@ export const deleteMultipleTransaction = async (ids) => {
     data: {
       type: "delete", // Mark as deleted instead of removing
     },
-    orderBy: {
-      id: 'asc', // ascending order by id
-    },
+    // orderBy: {
+    //   id: 'asc', // ascending order by id
+    // },
   });
   return result
 }

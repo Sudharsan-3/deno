@@ -1,3 +1,7 @@
+import Cards from '@/components/Cards'
+
+import History from '@/components/History'
+import Transactions from '@/components/Transactions'
 import UploadBank from '@/components/upload-bank'
 import UploadTransaction from '@/components/upload-transaction'
 import React from 'react'
@@ -5,9 +9,11 @@ import React from 'react'
 const page = () => {
   return (
     <div>
-      <h1>sudharsan</h1>
+      <Cards />
       <UploadBank />
       <UploadTransaction />
+      <Transactions />
+      <History />
     </div>
   )
 }

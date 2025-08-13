@@ -20,6 +20,13 @@ import { errorHandler } from "./src/middlewares/error.middleware.js";
 import { userRoutes } from "./src/modules/user/index.js";
 import { accountRoutes } from "./src/modules/account/index.js";
 import { transactionRoutes } from "./src/modules/transaction/index.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api",userRoutes)
 
