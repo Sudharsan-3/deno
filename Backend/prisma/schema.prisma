@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  // output = "../generated/prisma"
 }
 
 datasource db {
@@ -17,17 +16,18 @@ model User {
   createdAt   DateTime @default(now())
   Account     Account[]
   Transaction Transaction[]
+
+  TransactionSnapshot TransactionSnapshot[]
 }
 
 model Account {
-  id            Int    @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   name          String
   address       String
-  accountNo     String @unique
+  accountNo     String   @unique
   branch        String
   ifsc          String
   micr          String
-  // Removed: period
   startDate     DateTime?
   endDate       DateTime?
 
@@ -37,15 +37,65 @@ model Account {
   nomineeName    String? @default("None")
   jointHolders   String? @default("None")
 
-  createdAt   DateTime @default(now())
-  createdById Int
-  createdBy   User     @relation(fields: [createdById], references: [id])
+  createdAt     DateTime @default(now())
+  createdById   Int
+  createdBy     User     @relation(fields: [createdById], references: [id])
 
-  transactions Transaction[]
+  transactions  Transaction[]
+}
+
+
+
+
+model TransactionFile {
+  id            Int      @id @default(autoincrement())
+  fileName      String
+  fileType      String   // e.g., CSV, IMAGE, TEXT, EXCEL
+  filePath      String
+  description   String?
+
+  createdAt     DateTime @default(now())
+
+  transactionId Int
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }
 
 model Transaction {
+  id               Int       @id @default(autoincrement())
+  slNo             Int?
+  transactionDate  DateTime?
+  valueDate        DateTime?
+  chequeOrRef      String?
+  description      String?
+  amount           Int?
+  amountType       String?
+  balance          Int?
+  balanceType      String?
+  type             String?   @default("inuse")
+  createdAt        DateTime  @default(now())
+  
+  createdBy        User      @relation(fields: [createdById], references: [id])
+  createdById      Int
+  account          Account   @relation(fields: [accountId], references: [id])
+  accountId        Int
+  files            TransactionFile[]
+  snapshots        TransactionSnapshot[]
+
+  // NEW FIELD WITH DEFAULT VALUE
+  changeReason     String?   @default("No reason provided")
+
+  // NEW FIELD - Invoice with default
+  invoice          String?   @default("No invoice")
+}
+
+model TransactionSnapshot {
   id              Int       @id @default(autoincrement())
+
+  // Link to the original transaction
+  transactionId   Int
+  transaction     Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  // Snapshot of transaction fields
   slNo            Int?
   transactionDate DateTime?
   valueDate       DateTime?
@@ -55,29 +105,17 @@ model Transaction {
   amountType      String?
   balance         Int?
   balanceType     String?
+  type            String?
 
-  type            String    @default("inuse") // [inuse | deleted]
+  // NEW FIELD - Invoice with default
+  invoice         String?   @default("No invoice")
 
-  createdAt       DateTime  @default(now())
-  createdById     Int
-  createdBy       User      @relation(fields: [createdById], references: [id])
-
-  accountId       Int
-  account         Account   @relation(fields: [accountId], references: [id])
-
-  files           TransactionFile[] // Relation to new file table
+  // Info about the change
+  changedById     Int
+  changedBy       User       @relation(fields: [changedById], references: [id])
+  changeReason    String?
+  changedAt       DateTime   @default(now())
+  
 }
 
-model TransactionFile {
-  id            Int      @id @default(autoincrement())
-  fileName      String
-  fileType      String   // e.g., CSV, IMAGE, TEXT, EXCEL
-  filePath      String   // Or fileContent if storing as base64/blob
-  description   String?
-
-  createdAt     DateTime @default(now())
-
-  transactionId Int
-  transaction   Transaction @relation(fields: [transactionId], references: [id])
-}
 
