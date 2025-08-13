@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/features/auth/authSlice';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -14,12 +15,12 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await dispatch(login(form));
-    console.log(res , "from login")
+    console.log(res, "from login");
+
     if (res.meta.requestStatus === 'fulfilled') {
       router.push('/');
     }
   };
-  console.log(form)
 
   return (
     <div className="p-4 max-w-md mx-auto">
@@ -39,14 +40,25 @@ export default function LoginForm() {
           onChange={(e) => setForm({ ...form, password: e.target.value })}
           className="border p-2"
         />
+        
         {error && <p className="text-red-500">{error}</p>}
+
         <button type="submit" className="bg-blue-600 text-white p-2 rounded">
           {loading ? 'Logging in...' : 'Login'}
         </button>
+
+        {/* Register Link */}
+        <p className="text-center text-sm mt-4">
+          Don’t have an account?{' '}
+          <Link href="/register" className="text-blue-500 hover:underline">
+            Register here
+          </Link>
+        </p>
       </form>
     </div>
   );
 }
+
 
 // 'use client';
 
