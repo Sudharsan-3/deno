@@ -6,7 +6,7 @@ import { register } from '../redux/features/auth/authSlice';
 import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
-  const [form, setForm] = useState({ username: '', email: '', password: '' });
+  const [form, setForm] = useState({ name: '', email: '', password: '' });
   const dispatch = useDispatch();
   const router = useRouter();
   const { loading, error } = useSelector((state) => state.auth);
@@ -26,8 +26,8 @@ export default function RegisterForm() {
         <input
           type="text"
           placeholder="Username"
-          value={form.username}
-          onChange={(e) => setForm({ ...form, username: e.target.value })}
+          value={form.name}
+          onChange={(e) => setForm({ ...form, name: e.target.value })}
           className="border p-2"
         />
         <input
