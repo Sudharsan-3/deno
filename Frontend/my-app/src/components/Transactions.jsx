@@ -139,7 +139,7 @@ const Transactions = () => {
 
   const handleViewFile = (file) => {
     if (typeof window === "undefined") return; // prevent SSR crash
-    const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}`;
+    const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}` ||`https://deno-88tn.onrender.com/${file.filePath.replace(/\\/g, "/")}`;
     if (file.fileType.startsWith("image/")) {
       setPreviewImage(fileUrl);
     } else {
@@ -378,7 +378,7 @@ const Transactions = () => {
                   {showAttachments[txn.id] && txn.files?.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {txn.files.map((file) => {
-                        const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}`;
+                        const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}` ||`https://deno-88tn.onrender.com/${file.filePath.replace(/\\/g, "/")}`;
                         const isImage = file.fileType.startsWith("image/");
                         return (
                           <button
