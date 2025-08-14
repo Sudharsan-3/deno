@@ -9,8 +9,10 @@ export const findByEmail = async (email) =>{
     })
 }
 
-export const create = async ({name,email,password}) =>{
+export const create = async (name,email,password) =>{
     return await prisma.user.create({
-        name,email,password
+        data:{
+            name,email,password
+        }
     })
 }

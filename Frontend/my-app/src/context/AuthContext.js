@@ -2,15 +2,17 @@
 "use client";
 
 import { createContext, useEffect, useState, useContext } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
+    const publicRoutes = ["/login", "/register"];
     const authData = localStorage.getItem("authData");
 
     try {
@@ -20,13 +22,15 @@ export const AuthProvider = ({ children }) => {
 
       if (token && user) {
         setUser(user);
-      } else {
+      } else if (!publicRoutes.includes(pathname)) {
         router.push("/login");
       }
     } catch (e) {
-      router.push("/login");
+      if (!publicRoutes.includes(pathname)) {
+        router.push("/login");
+      }
     }
-  }, []);
+  }, [pathname]);
 
   return (
     <AuthContext.Provider value={{ user }}>
@@ -35,5 +39,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// Hook to access user
 export const useAuth = () => useContext(AuthContext);
