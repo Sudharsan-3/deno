@@ -25,13 +25,13 @@ export const register = async ({ name, email, password }) => {
     // Hash password
     const saltRounds = Number(process.env.BCRYPT_SALT_ROUNDS) || 10;
     const hashedPassword = await bcrybt.hash(password, saltRounds);
-    const password = hashedPassword
+    
 
     // Create user
     const newUser = await userRepo.create(
         name,
         email,
-        password
+        hashedPassword
     );
 
     // Return safe response (no password)
