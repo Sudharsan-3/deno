@@ -11,10 +11,7 @@ const ShowAttachemnts = ({ txn }) => {
         </summary>
         <div className="flex flex-wrap gap-4 mt-3">
           {txn.files.map((file) => {
-            const fileUrl = `http://localhost:5000/${file.filePath.replace(
-              /\\/g,
-              "/"
-            )}`;
+            const fileUrl = `https://deno-88tn.onrender.com/${file.filePath.replace(/\\/g, "/")}`||`http://localhost:5000/${file.filePath.replace(/\\/g, "/")}`;
             const isImage = file.fileType.startsWith("image/");
 
             return (
