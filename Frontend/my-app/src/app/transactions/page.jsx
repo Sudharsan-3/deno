@@ -1,12 +1,12 @@
+import Transactions from '@/components/Transactions'
 import React from 'react'
 import Header from '@/components/layouts/Header'
-import User from '@/components/user/User'
-
 const page = () => {
   return (
     <div>
       <Header />
-      <User />
+        <Transactions />
+      
     </div>
   )
 }

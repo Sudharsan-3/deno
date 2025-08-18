@@ -25,10 +25,6 @@ const EditeTransaction = () => {
                      </div>
                 )
             })}
-           
-            
-        
-      
     </div>
   )
 }

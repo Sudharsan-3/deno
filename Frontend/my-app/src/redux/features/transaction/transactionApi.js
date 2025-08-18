@@ -1,6 +1,7 @@
 import api from "@/lib/axios"
 
-export const uploadAccountDetails = async(credentials)=>{
-    const data  = await api.post("/account",credentials)
-    return data
-}
+
+export const getAllTransactions = async() =>{
+    const  res = await api.get("/transaction/all")
+    return res.data
+  }

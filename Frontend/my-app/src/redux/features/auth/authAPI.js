@@ -11,3 +11,9 @@ export const registerAPI = async (data) => {
   const res = await api.post("/register", data);
   return res.data;
 };
+
+
+export const getAllTransactions = async() =>{
+  const  res = await api.get("/transaction/all")
+  return res.data
+}

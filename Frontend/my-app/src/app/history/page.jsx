@@ -1,12 +1,13 @@
-import React from 'react'
+import History from '@/components/History'
 import Header from '@/components/layouts/Header'
-import User from '@/components/user/User'
+import React from 'react'
 
 const page = () => {
   return (
     <div>
       <Header />
-      <User />
+        <History />
+      
     </div>
   )
 }

@@ -1,12 +1,13 @@
-import React from 'react'
+"use client"
 import Header from '@/components/layouts/Header'
-import User from '@/components/user/User'
+import UploadBank from '@/components/accounts/upload-bank'
+import React from 'react'
 
 const page = () => {
   return (
     <div>
       <Header />
-      <User />
+        <UploadBank />
     </div>
   )
 }

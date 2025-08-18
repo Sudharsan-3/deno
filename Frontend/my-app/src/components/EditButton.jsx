@@ -1,13 +1,16 @@
 "use client";
 import React from "react";
+import { MdOutlineEdit } from "react-icons/md";
+
 
 export default function EditButton({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+      className="px-2 py-1  text-black rounded hover:cursor-pointer "
     >
-      Edit
+      <MdOutlineEdit />
+
     </button>
   );
 }
