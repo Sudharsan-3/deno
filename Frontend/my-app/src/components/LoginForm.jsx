@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/features/auth/authSlice';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { FaUserLock } from 'react-icons/fa';
 
 export default function LoginForm() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -15,7 +16,6 @@ export default function LoginForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const res = await dispatch(login(form));
-    console.log(res, "from login");
 
     if (res.meta.requestStatus === 'fulfilled') {
       router.push('/');
@@ -23,87 +23,70 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="p-4 max-w-md mx-auto">
-      <h2 className="text-xl font-bold mb-4">Login</h2>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <input
-          type="email"
-          placeholder="Email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="border p-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={form.password}
-          onChange={(e) => setForm({ ...form, password: e.target.value })}
-          className="border p-2"
-        />
-        
-        {error && <p className="text-red-500">{error}</p>}
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8">
+        {/* Header */}
+        <div className="flex flex-col items-center mb-6">
+          <FaUserLock className="text-blue-600 text-4xl mb-2" />
+          <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
+          <p className="text-gray-500 text-sm">Login to your account</p>
+        </div>
 
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded">
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            />
+          </div>
 
-        {/* Register Link */}
-        <p className="text-center text-sm mt-4">
-          Don’t have an account?{' '}
-          <Link href="/register" className="text-blue-500 hover:underline">
-            Register here
-          </Link>
-        </p>
-      </form>
+          {/* Password */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <input
+              type="password"
+              placeholder="Enter your password"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
+            />
+          </div>
+
+          {/* Error Message */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm px-4 py-2 rounded-lg">
+              {error}
+            </div>
+          )}
+
+          {/* Submit Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className={`w-full py-3 rounded-lg font-semibold shadow-md transition ${
+              loading
+                ? 'bg-blue-400 text-white opacity-70 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700 text-white'
+            }`}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+
+          {/* Register Link */}
+          <p className="text-center text-sm text-gray-600 mt-4">
+            Don’t have an account?{' '}
+            <Link href="/register" className="text-blue-600 font-medium hover:underline">
+              Register here
+            </Link>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
-
-
-// 'use client';
-
-// import { useState } from 'react';
-// import { useDispatch, useSelector } from 'react-redux';
-// import { login } from '../../src/redux/features/auth/authSlice';
-// import { useRouter } from 'next/navigation';
-
-// export default function LoginForm() {
-//   const [form, setForm] = useState({ email: '', password: '' });
-//   const dispatch = useDispatch();
-//   const router = useRouter();
-//   const { loading, error, user } = useSelector((state) => state.auth);
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-//     const res = await dispatch(login(form));
-//     if (res.meta.requestStatus === 'fulfilled') {
-//       router.push('/');
-//     }
-//   };
-
-//   return (
-//     <div className="p-4 max-w-md mx-auto">
-//       <h2 className="text-xl font-bold mb-4">Login</h2>
-//       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-//         <input
-//           type="email"
-//           placeholder="Email"
-//           value={form.email}
-//           onChange={(e) => setForm({ ...form, email: e.target.value })}
-//           className="border p-2"
-//         />
-//         <input
-//           type="password"
-//           placeholder="Password"
-//           value={form.password}
-//           onChange={(e) => setForm({ ...form, password: e.target.value })}
-//           className="border p-2"
-//         />
-//         {error && <p className="text-red-500">{error}</p>}
-//         <button type="submit" className="bg-blue-500 text-white p-2">
-//           {loading ? 'Logging in...' : 'Login'}
-//         </button>
-//       </form>
-//     </div>
-//   );
-// }
