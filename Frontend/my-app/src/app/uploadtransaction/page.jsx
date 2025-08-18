@@ -1,12 +1,13 @@
-import React from 'react'
 import Header from '@/components/layouts/Header'
-import User from '@/components/user/User'
+import UploadTransaction from '@/components/upload-transaction'
+import React from 'react'
 
 const page = () => {
   return (
     <div>
       <Header />
-      <User />
+        <UploadTransaction />
+      
     </div>
   )
 }

@@ -30,10 +30,24 @@ export const AuthProvider = ({ children }) => {
         router.push("/login");
       }
     }
-  }, [pathname]);
+  }, [pathname, router]);
+
+  // ✅ Login helper
+  const login = (authData) => {
+    localStorage.setItem("authData", JSON.stringify(authData));
+    setUser(authData?.data?.user);
+    router.push("/"); // redirect after login
+  };
+
+  // ✅ Logout helper
+  const logout = () => {
+    localStorage.removeItem("authData");
+    setUser(null);
+    router.push("/login");
+  };
 
   return (
-    <AuthContext.Provider value={{ user }}>
+    <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
