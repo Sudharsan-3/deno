@@ -97,6 +97,7 @@ export const deleteAllTransacions = async(req,res,next)=>{
 // Restore transactions 
 
 export const restoreTransaction = async(req,res,next)=>{
+  console.log(req.body.id,"from restore ")
     try {
         const {id} = req.body;
         console.log(req.body)
@@ -363,4 +364,45 @@ export const uploadTransactionFiles = async (req, res) => {
   }
 };
 
+// get transaction snapshot
 
+export const getTransactionSnapshot = async (req, res) => {
+  console.log(req.body,"from getTramsactionSnapshot")
+  try {
+    const transactionId = req.body.id;
+
+    // Validate input
+    if (!transactionId) {
+      return res.status(400).json({
+        success: false,
+        message: "Transaction ID is required",
+      });
+    }
+
+    // Call service to get snapshot
+    const result = await transactionService.getTransactionSnapshot(transactionId);
+
+    if (!result || result.length === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "No transaction snapshot found",
+        data: [],
+      });
+    }
+  console.log(result)
+    // Success response
+    return res.status(200).json({
+      success: true,
+      message: "Transaction snapshot loaded successfully",
+      data: result,
+    });
+   
+
+  } catch (error) {
+    console.error("Error while loading transaction snapshot:", error.message);
+    return res.status(error.statusCode || 500).json({
+      success: false,
+      message: error.message || "Internal server error",
+    });
+  }
+};

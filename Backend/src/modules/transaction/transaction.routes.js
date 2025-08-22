@@ -13,7 +13,7 @@ const router = express.Router();
 router.put("/updateTransaction/:id", verifyToken, transactionController.updateTransaction);
 
 router.get("/all",verifyToken,transactionController.getTransaction)
-router.get("/restore",verifyToken,transactionController.restoreTransaction)
+router.put("/restore",verifyToken,transactionController.restoreTransaction)
 router.get("/history",verifyToken,transactionController.transactionHistroy)
 
 router.delete("/deleteAll",verifyToken,transactionController.deleteAllTransacions)
@@ -31,5 +31,8 @@ router.post('/import/transactions',verifyToken,upload.single('file'), transactio
 router.post("/upload/attachments", verifyToken, uploads.array("files", 10), transactionController.uploadTransactionFiles);
 
 router.post("/export-zip", exportTransactionsZipController);
+
+router.post("/getTramsactionSnapshot",transactionController.getTransactionSnapshot)
+
 
 export default router;  

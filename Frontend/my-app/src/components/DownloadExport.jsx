@@ -50,7 +50,7 @@ export default function DownloadExport({ filters }) {
     <div className="relative inline-block text-left" ref={menuRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="bg-blue-600 text-white px-4 py-2 rounded-lg shadow hover:bg-blue-700 transition flex items-center gap-2"
+        className="border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer bg-white text-black px-4 py-2 rounded-lg shadow  transition flex items-center gap-2"
       >
         Export with Attachments
         <FaChevronDown

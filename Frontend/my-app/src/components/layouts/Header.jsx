@@ -14,14 +14,14 @@ const Data = [
   { key: "Transactions", link: "/transactions" },
   { key: "History", link: "/history" },
   { key: "Upload Transaction", link: "/uploadtransaction" },
-  { key: "User", link: "/user" }, // ✅ Added User to menu
+  // Removed "User" from the main Data array since we're handling it separately
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-md">
+    <header className="sticky top-0 z-50 bg-transparent ">
       <div className="flex justify-between items-center px-4 py-2 max-w-7xl mx-auto">
         {/* Logo */}
         <Link href="/">
@@ -34,7 +34,7 @@ const Header = () => {
         </Link>
 
         {/* Desktop Menu */}
-        <nav className="hidden md:flex gap-6">
+        <nav className="hidden md:flex gap-6 items-center">
           {Data.map((e, i) => (
             <Link key={i} href={e.link}>
               <p
@@ -46,18 +46,18 @@ const Header = () => {
               </p>
             </Link>
           ))}
-        </nav>
-
-        {/* User Icon */}
-        <Link href="/user" className="hidden md:block">
-          <div
-            className="p-2 rounded-full bg-white shadow-sm 
-            border border-transparent hover:border-blue-300 
-            hover:text-blue-700 transition cursor-pointer"
-          >
-            <Image src={userIcon} alt="User icon" className="w-5" />
-          </div>
-        </Link>
+          </nav>
+          {/* User Icon for Desktop - Hidden on mobile */}
+          <Link href="/user" className="hidden md:block">
+            <div
+              className="p-2 rounded-full bg-white shadow-sm 
+              border border-transparent hover:border-blue-300 
+              hover:text-blue-700 transition cursor-pointer"
+            >
+              <Image src={userIcon} alt="User icon" className="w-5" />
+            </div>
+          </Link>
+        
 
         {/* Mobile Menu Toggle */}
         <button
@@ -88,6 +88,15 @@ const Header = () => {
                 </p>
               </Link>
             ))}
+            {/* User link in mobile menu (text only) */}
+            <Link href="/user" onClick={() => setMenuOpen(false)}>
+              <p
+                className="px-3 py-2 rounded-lg bg-gray-50 hover:bg-blue-50 
+                hover:text-blue-700 font-medium transition"
+              >
+                User
+              </p>
+            </Link>
           </motion.nav>
         )}
       </AnimatePresence>

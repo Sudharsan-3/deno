@@ -31,8 +31,9 @@ const INITIAL_STATE = {
 };
 
 const UploadBank = () => {
-  const auth = useAuth();
-  const creatorId = auth?.user?.id;
+  const {user} = useAuth();
+  const createdById = user?.id
+  console.log(createdById)
 
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [errors, setErrors] = useState({});
@@ -86,8 +87,7 @@ const UploadBank = () => {
 
     try {
       await api.post('/account', {
-        ...formData,
-        createdById: creatorId,
+        ...formData,createdById
       });
 
       setSubmitStatus({ type: 'success', message: '✅ Bank details uploaded successfully.' });
