@@ -809,3 +809,50 @@ export const uploadFiles = async (transactionId, files, description) => {
   return await transactionRepository.saveFiles(fileDataArray);
 };
 
+// get transaction snapshot
+
+export const getTransactionSnapshot = async (transactionId) => {
+  try {
+    if (!transactionId) {
+      throw new Error("Transaction ID is required");
+    }
+
+    // 1. Check if transaction exists
+    const existingTransaction = await transactionRepository.uniqueTransactionById(transactionId);
+    if (!existingTransaction) {
+      return {
+        success: false,
+        message: "Transaction not found",
+        data: null
+      };
+    }
+
+    // 2. Fetch transaction snapshot
+    const snapshotData = await transactionRepository.getTransactionSnapshot(transactionId);
+    if (!snapshotData || snapshotData.length === 0) {
+      return {
+        success: false,
+        message: "No transaction snapshot found",
+        data: []
+      };
+    }
+
+    // 3. Return snapshot data
+    return {
+      success: true,
+      message: "Transaction snapshot retrieved successfully",
+      data: snapshotData
+    };
+
+  } catch (error) {
+    console.error("Error in getTransactionSnapshot:", error.message);
+    return {
+      success: false,
+      message: "Error retrieving transaction snapshot",
+      error: error.message
+    };
+  }
+};
+
+
+

@@ -1,8 +1,10 @@
 import { accountService } from "./index.js";
 
-// get accountBy id 
-export const getAccountByUser =async(req,res,next) =>{
-    const {id}= req.body;
+// userInfo 
+
+export const userInfo = async(req,res,next)=>{
+    const {id} = req.result ;
+    console.log(id,"from account details")
     if(!id){
         return res.status(404).json({
             success:false,
@@ -10,7 +12,40 @@ export const getAccountByUser =async(req,res,next) =>{
         })
     }
     try {
-        const resp  = await accountService.getAccountByUser(req.body)
+        const data =  await accountService.userInfo(req.result)
+        if(!data){
+            return res.status(404).json({
+                success:false,
+                message:"User info not founded"
+            })
+        }
+        return res.status(201).json({
+            success : true,
+            message : "User info loaded successfully",
+            length :data.length,
+            data 
+        })
+        
+    } catch (error) {
+        next(error)
+        console.log(error)
+        
+    }
+}
+
+// get accountBy id 
+export const getAccountByUser =async(req,res,next) =>{
+    
+    const id= req.result.id;
+    console.log(id)
+    if(!id){
+        return res.status(404).json({
+            success:false,
+            message:"Enter the user id to get the accounts"
+        })
+    }
+    try {
+        const resp  = await accountService.getAccountByUser(req.result)
         if(!res){
             return res.status(404).json({
                 success:false,
@@ -20,6 +55,7 @@ export const getAccountByUser =async(req,res,next) =>{
         return res.status(201).json({
             success : true,
             message : "Account loaded successfully",
+            length :resp.length,
             data : resp
         })
 
@@ -47,6 +83,7 @@ export const accountDetail = async (req, res, next) => {
         micr
     } = req.body;
     console.log(typeof(Number(createdById)))
+    console.log(req.body)
     try {
         if (!createdById || !name || !address || !accountNo || !branch || !ifsc || !micr) {
             return res.status(400).json({
@@ -101,10 +138,10 @@ export const getAccount = async (req, res, next) => {
 // Updata account details
 
 export const updateAccount = async (req, res, next) => {
-    const accountId = (req.body)
-    console.log(accountId)
+    const accountData = (req.body)
+    console.log(accountData,"from updateacount")
     try {
-        if (!accountId) {
+        if (!accountData) {
             res.status(400).json({
                 success: false,
                 message: "Provid the acccount id to find a acccount to update"
@@ -129,24 +166,33 @@ export const updateAccount = async (req, res, next) => {
 
 // Delete account
 
+
+
+
 export const deleteAccount = async (req, res, next) => {
     try {
-        const accountId = Number(req.body);
+        const { accountId } = req.body;
+
         if (!accountId) {
-            return res.status(404).json({
-                message: "No id founded to delete the acccount"
-            })
+            return res.status(400).json({
+                success: false,
+                message: "Account ID is required"
+            });
         }
-        await accountService.deleteAccount(req.body)
+
+        await accountService.deleteAccount(accountId);
+
         return res.status(200).json({
             success: true,
-            message: "Account deleted successfully",
-
-        })
+            message: `Account with ID ${accountId} deleted successfully`
+        });
 
     } catch (error) {
-        next(error)
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Failed to delete account"
+        });
     }
-}
+};
 
 

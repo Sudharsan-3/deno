@@ -24,7 +24,7 @@ const Upload = () => {
               <div className="px-2 py-1">
                 <button
                   onClick={openModal}
-                  className=" flex text-black gap-2 hover:bg-white px-4 py-2 rounded shadow  transition W-20 hover:cursor-pointer"
+                  className=" flex text-black gap-2 bg-white hover:text-blue-700 border border-transparent hover:border-blue-700 px-4 py-2 rounded shadow  transition W-20 hover:cursor-pointer"
                 >
                   <Image src={ uploadIcon } alt='upload logo' className='w-4' />   Upload transactions
                 </button>

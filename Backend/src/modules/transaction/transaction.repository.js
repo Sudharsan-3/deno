@@ -172,3 +172,11 @@ export const saveFiles = async (filesData) => {
   return await Promise.all(createPromises);
 };
 
+// Get transaction snapshot data
+
+export const getTransactionSnapshot = async(transactionId)=>{
+  return await prisma.transactionSnapshot.findMany({
+    where :{ transactionId:Number(transactionId)}
+  })
+  
+}

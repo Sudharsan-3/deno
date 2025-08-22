@@ -2,6 +2,7 @@
 
 import api from "@/lib/axios";
 import React, { useEffect, useState } from "react";
+import { FiRefreshCw } from "react-icons/fi";
 
 const transactionHeading = [
   "S.No",
@@ -12,11 +13,13 @@ const transactionHeading = [
   "Amount Type",
   "Balance",
   "Balance Type",
+  "Action",
 ];
 
 const History = () => {
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [restoringId, setRestoringId] = useState(null);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -32,49 +35,85 @@ const History = () => {
     fetchTransactions();
   }, []);
 
+  const handleRestore = async (id) => {
+    if (!id) return;
+
+    setRestoringId(id); // show loading state for this row
+    try {
+      await api.put("/transaction/restore", { id: [id] }); // send as array for consistency
+      alert("Transaction restored successfully!");
+      setTransactions((prev) => prev.filter((txn) => txn.id !== id));
+    } catch (error) {
+      console.error("Error restoring transaction:", error);
+      alert("Failed to restore transaction.");
+    } finally {
+      setRestoringId(null);
+    }
+  };
+
   return (
-    <div className="p-4 overflow-x-auto">
-      <h2 className="text-xl font-semibold mb-4">All Transactions</h2>
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-semibold text-gray-800">Transaction History</h2>
+      </div>
 
       {loading ? (
         <p className="text-gray-500">Loading...</p>
       ) : transactions.length === 0 ? (
-        <p className="text-gray-500">No transactions history found.</p>
+        <p className="text-gray-500">No transaction history found.</p>
       ) : (
-        <table className="min-w-full table-auto border border-gray-200 rounded-md shadow-md bg-white">
-          <thead className="bg-gray-100 text-gray-700">
-            <tr>
-              {transactionHeading.map((title, i) => (
-                <th key={i} className="text-left px-4 py-2 border-b border-gray-200">
-                  {title}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((txn, i) => (
-              <tr
-                key={txn.id}
-                className={i % 2 === 0 ? "bg-white" : "bg-gray-50"}
-              >
-                <td className="px-4 py-2 border-b">{i + 1}</td>
-                <td className="px-4 py-2 border-b">{formatDate(txn.transactionDate)}</td>
-                <td className="px-4 py-2 border-b">{formatDate(txn.valueDate)}</td>
-                <td className="px-4 py-2 border-b">{txn.description}</td>
-                <td className="px-4 py-2 border-b">₹{txn.amount.toLocaleString()}</td>
-                <td className="px-4 py-2 border-b">{txn.amountType}</td>
-                <td className="px-4 py-2 border-b">₹{txn.balance.toLocaleString()}</td>
-                <td className="px-4 py-2 border-b">{txn.balanceType}</td>
+        <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-gray-50 text-gray-700 uppercase text-sm">
+                {transactionHeading.map((title, i) => (
+                  <th key={i} className="px-4 py-3 font-semibold">
+                    {title}
+                  </th>
+                ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {transactions.map((txn, i) => (
+                <tr
+                  key={txn.id}
+                  className={`transition hover:bg-blue-50 text-gray-700 ${
+                    i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                  }`}
+                >
+                  <td className="px-4 py-3">{i + 1}</td>
+                  <td className="px-4 py-3">{formatDate(txn.transactionDate)}</td>
+                  <td className="px-4 py-3">{formatDate(txn.valueDate)}</td>
+                  <td className="px-4 py-3 truncate max-w-[200px]">{txn.description}</td>
+                  <td className="px-4 py-3 font-semibold text-blue-600">
+                    ₹{txn.amount.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3">{txn.amountType}</td>
+                  <td className="px-4 py-3 font-medium">₹{txn.balance.toLocaleString()}</td>
+                  <td className="px-4 py-3">{txn.balanceType}</td>
+                  <td className="px-4 py-3">
+                    <button
+                      onClick={() => handleRestore(txn.id)}
+                      disabled={restoringId === txn.id}
+                      className={`flex items-center gap-2 px-3 py-1 rounded-lg text-white ${
+                        restoringId === txn.id ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                      }`}
+                    >
+                      <FiRefreshCw className="w-4 h-4" />
+                      {restoringId === txn.id ? "Restoring..." : "Restore"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );
 };
 
-// Optional: Format date string
+// Date Formatter
 const formatDate = (dateStr) => {
   if (!dateStr) return "-";
   const d = new Date(dateStr);

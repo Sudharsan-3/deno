@@ -16,7 +16,7 @@ export default function UploadTransaction({ setShow }) {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const res = await api.post("/getAccountByuser", { id: userId });
+        const res = await api.get("/getAccountByuser");
         setAccounts(res.data.data || []);
       } catch (err) {
         alert("⚠️ Failed to load accounts");

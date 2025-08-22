@@ -4,7 +4,9 @@ import {verifyToken}from "../../middlewares/verifyToken.js"
 
 const router = express.Router();
 
-router.post("/getAccountByuser",verifyToken,accountController.getAccountByUser)
+router.get("/userInfo",verifyToken,accountController.userInfo)
+
+router.get("/getAccountByuser",verifyToken,accountController.getAccountByUser)
 
 router.post("/account",verifyToken,accountController.accountDetail);
 

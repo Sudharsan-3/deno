@@ -1,5 +1,67 @@
 import prisma from "../prisma/prismaClient.js";
 
+
+
+export const userInfo = async (id) => {
+  const user = await prisma.user.findUnique({
+    where: { id: Number(id) },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      createdAt: true,
+      Account: {
+        include: {
+          transactions: true
+        }
+      },
+      Transaction: true,
+      TransactionSnapshot: true
+    }
+  });
+
+  if (!user) return null;
+
+  // 🧮 Overall counts
+  const accountCount = user.Account.length;
+
+  const transactionsFromUser = user.Transaction;
+  const allTransactions = [ ...transactionsFromUser];
+  const transactionCount = allTransactions.length;
+  const snapshotCount = user.TransactionSnapshot.length;
+  const inuseTransactions = transactionsFromUser.filter((e) => e.type.toLocaleLowerCase() === "inuse")
+  const deleteTransactions = transactionsFromUser.filter((e) => e.type.toLocaleLowerCase() === "delete")
+
+  // 🧮 Account-wise transaction counts (only name + count)
+  const accountTransactionSummary = user.Account.map(acc => ({
+    accountName: acc.name,
+    transactionCount: acc.transactions.length
+  }));
+
+  return {
+    success: true,
+    message: "User info loaded successfully",
+    data: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt,
+      accountTransactionSummary, // 👈 clean summary
+      Transaction: user.Transaction,
+      TransactionSnapshot: user.TransactionSnapshot,
+      _counts: {
+        accounts: accountCount,
+        transactions: transactionCount,
+        transactionsInuse: inuseTransactions.length,
+        transactionsDeleted: deleteTransactions.length,
+        snapshots: snapshotCount,
+      }
+    }
+  };
+};
+
+
+
 // account by user id
 
 export const accountByUser = async(id)=>{
@@ -64,9 +126,8 @@ export const findAcountById = async(accountId)=>{
     })
 }
 // Update account
-export const update = async(
+export const update = async (
     accountId,
-    createdBy,
     name,
     address,
     custRelnNo,
@@ -76,37 +137,42 @@ export const update = async(
     currency,
     branch,
     ifsc,
-    micr) => {
-        console.log(accountId,"from accountRepository")
+    micr
+) => {
+    console.log(accountId, "from accountRepository");
+
     return await prisma.account.update({
         where: {
             id: Number(accountId)
-        }
-        , data: {
-            createdBy,
+        },
+        data: {
             name,
             address,
             custRelnNo,
             accountNo,
-            startDate,
-            endDate,
+            startDate: startDate ? new Date(startDate) : null,
+            endDate: endDate ? new Date(endDate) : null,
             currency,
             branch,
             ifsc,
             micr
         }
-    })
+    });
+};
 
-}
+// Check account
 
+export const checkAccount = async (accountId) => {
+    return prisma.account.findUnique({
+        where: { id: Number(accountId) }
+    });
+};
 
-// deleteAccount
+// delete account
 
-export const deleteById =  async(AccountId) =>{
+export const deleteById = async (accountId) => {
     return prisma.account.delete({
-        where : {
-        id:Number(AccountId)
-        }
-    })
-}
+        where: { id: Number(accountId) }
+    });
+};
 

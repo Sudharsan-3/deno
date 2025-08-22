@@ -1,5 +1,15 @@
 import { accountRepository } from "./index.js";
 
+// userInfo
+
+export const userInfo = async({id})=>{
+    const data = await accountRepository.userInfo(id)
+    if(!data){
+        return null
+    }
+    return data
+}
+
 // Account by user 
 
 export const getAccountByUser = async({id})=>{
@@ -64,9 +74,8 @@ export const getAccount = async()=>{
 
 // Update Account Details
 
-export const updateAccount = async({
+export const updateAccount = async ({
     accountId,
-    createdBy,
     name,
     address,
     custRelnNo,
@@ -77,42 +86,42 @@ export const updateAccount = async({
     branch,
     ifsc,
     micr
-}) =>{
-    const checkAccountById = await accountRepository.findAcountById(accountId)
-   
-        if (!checkAccountById){
-            const error  = new Error ("No account was founded")
-            error.statusCode = 404;
-            throw error
-        }
-        
-    const updateAccountDetails = await accountRepository.update(
-    accountId,
-    createdBy,
-    name,
-    address,
-    custRelnNo,
-    accountNo,
-    startDate,
-    endDate,
-    currency,
-    branch,
-    ifsc,
-    micr
-    )
-
-    return {
-        updateAccountDetails
+}) => {
+    const checkAccountById = await accountRepository.findAcountById(accountId);
+    if (!checkAccountById) {
+        const error = new Error("No account was found");
+        error.statusCode = 404;
+        throw error;
     }
-}
+
+    const sanitize = (value) => (value === '' ? null : value);
+
+    const updateAccountDetails = await accountRepository.update(
+        accountId,
+        sanitize(name),
+        sanitize(address),
+        sanitize(custRelnNo),
+        sanitize(accountNo),
+        sanitize(startDate),
+        sanitize(endDate),
+        sanitize(currency),
+        sanitize(branch),
+        sanitize(ifsc),
+        sanitize(micr)
+    );
+
+    return updateAccountDetails;
+};
 
 // deleteAccount
 
-export const deleteAccount = async ({id})=>{
-    const acccountId = Number(id)
-    const deleteAccount = await accountRepository.deleteById(acccountId);
-    return (
-        deleteAccount
-    )
 
-}
+
+export const deleteAccount = async (accountId) => {
+    const account = await accountRepository.checkAccount(accountId);
+    if (!account) {
+        throw new Error("Account not found");
+    }
+    return accountRepository.deleteById(accountId);
+};
+
