@@ -2,7 +2,7 @@ import axios from "axios";
 import {jwtDecode} from "jwt-decode";
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000/api",
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "https://deno-88tn.onrender.com/api",
 });
 
 api.interceptors.request.use(
