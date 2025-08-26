@@ -52,22 +52,24 @@ const History = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-semibold text-gray-800">Transaction History</h2>
+    <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
+        <h2 className="text-2xl sm:text-3xl font-bold text-black">
+          Transaction History
+        </h2>
       </div>
 
       {loading ? (
-        <p className="text-gray-500">Loading...</p>
+        <p className="text-gray-500 text-center">Loading...</p>
       ) : transactions.length === 0 ? (
-        <p className="text-gray-500">No transaction history found.</p>
+        <p className="text-gray-500 text-center">No transaction history found.</p>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-xl shadow-lg">
+        <div className="overflow-x-auto bg-white rounded-2xl shadow-lg border border-pink-200">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-gray-50 text-gray-700 uppercase text-sm">
+              <tr className="bg-pink-100 text-black uppercase text-sm tracking-wide">
                 {transactionHeading.map((title, i) => (
-                  <th key={i} className="px-4 py-3 font-semibold">
+                  <th key={i} className="px-4 py-3 font-semibold whitespace-nowrap">
                     {title}
                   </th>
                 ))}
@@ -77,15 +79,15 @@ const History = () => {
               {transactions.map((txn, i) => (
                 <tr
                   key={txn.id}
-                  className={`transition hover:bg-blue-50 text-gray-700 ${
+                  className={`transition hover:bg-pink-50 text-gray-700 text-sm sm:text-base ${
                     i % 2 === 0 ? "bg-white" : "bg-gray-50"
                   }`}
                 >
                   <td className="px-4 py-3">{i + 1}</td>
                   <td className="px-4 py-3">{formatDate(txn.transactionDate)}</td>
                   <td className="px-4 py-3">{formatDate(txn.valueDate)}</td>
-                  <td className="px-4 py-3 truncate max-w-[200px]">{txn.description}</td>
-                  <td className="px-4 py-3 font-semibold text-blue-600">
+                  <td className="px-4 py-3 truncate max-w-[150px] sm:max-w-[250px]">{txn.description}</td>
+                  <td className="px-4 py-3 font-semibold text-pink-600">
                     ₹{txn.amount.toLocaleString()}
                   </td>
                   <td className="px-4 py-3">{txn.amountType}</td>
@@ -95,8 +97,10 @@ const History = () => {
                     <button
                       onClick={() => handleRestore(txn.id)}
                       disabled={restoringId === txn.id}
-                      className={`flex items-center gap-2 px-3 py-1 rounded-lg text-white ${
-                        restoringId === txn.id ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
+                      className={`flex items-center gap-2 px-3 py-2 rounded-lg text-white text-sm font-medium transition whitespace-nowrap ${
+                        restoringId === txn.id
+                          ? "bg-gray-400"
+                          : "bg-pink-600 hover:bg-pink-700"
                       }`}
                     >
                       <FiRefreshCw className="w-4 h-4" />

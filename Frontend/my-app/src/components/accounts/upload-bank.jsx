@@ -31,9 +31,8 @@ const INITIAL_STATE = {
 };
 
 const UploadBank = () => {
-  const {user} = useAuth();
-  const createdById = user?.id
-  console.log(createdById)
+  const { user } = useAuth();
+  const createdById = user?.id;
 
   const [formData, setFormData] = useState(INITIAL_STATE);
   const [errors, setErrors] = useState({});
@@ -50,7 +49,6 @@ const UploadBank = () => {
     if (REQUIRED_FIELDS.includes(name) && !value.trim()) {
       return 'This field is required';
     }
-
     switch (name) {
       case 'name':
         return /^[a-zA-Z\s]+$/.test(value) ? '' : 'Name must contain only letters';
@@ -87,9 +85,9 @@ const UploadBank = () => {
 
     try {
       await api.post('/account', {
-        ...formData,createdById
+        ...formData,
+        createdById,
       });
-
       setSubmitStatus({ type: 'success', message: '✅ Bank details uploaded successfully.' });
       setFormData(INITIAL_STATE);
     } catch (error) {
@@ -103,18 +101,20 @@ const UploadBank = () => {
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <div className="bg-white shadow-lg rounded-2xl p-8">
-        <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-800">
-          <FaUniversity className="text-blue-600 text-3xl" />
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+      <div className="bg-white shadow-xl rounded-2xl p-6 sm:p-8 border border-pink-200">
+        {/* Header */}
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 flex items-center gap-3 text-black">
+          <FaUniversity className="text-pink-600 text-3xl" />
           Upload Bank Details
         </h2>
 
+        {/* Status Message */}
         {submitStatus && (
           <div
             className={`mb-6 text-sm px-4 py-3 rounded-lg border ${
               submitStatus.type === 'success'
-                ? 'bg-green-50 text-green-700 border-green-200'
+                ? 'bg-pink-50 text-pink-700 border-pink-200'
                 : 'bg-red-50 text-red-700 border-red-200'
             }`}
           >
@@ -122,14 +122,15 @@ const UploadBank = () => {
           </div>
         )}
 
+        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {[...REQUIRED_FIELDS, ...OPTIONAL_FIELDS].map((key) => (
               <div key={key} className="flex flex-col">
-                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                <label className="block text-sm font-medium text-gray-800 mb-1 capitalize">
                   {key.replace(/([A-Z])/g, ' $1')}
                   {REQUIRED_FIELDS.includes(key) ? (
-                    <span className="text-red-500 ml-1">*</span>
+                    <span className="text-pink-500 ml-1">*</span>
                   ) : (
                     <span className="text-gray-400 text-xs ml-2">(optional)</span>
                   )}
@@ -140,28 +141,34 @@ const UploadBank = () => {
                   value={formData[key]}
                   onChange={handleChange}
                   type={key.toLowerCase().includes('date') ? 'date' : 'text'}
-                  className={`w-full border px-3 py-2 rounded-lg shadow-sm focus:outline-none focus:ring-2 transition cursor-pointer ${
+                  className={`w-full border px-4 py-3 rounded-xl shadow-sm focus:outline-none transition cursor-pointer text-gray-700 ${
                     errors[key]
-                      ? 'border-red-500 focus:ring-red-400'
-                      : 'border-gray-300 focus:ring-blue-400'
+                      ? 'border-red-500 focus:ring-2 focus:ring-red-400'
+                      : 'border-gray-300 focus:ring-2 focus:ring-pink-400'
                   }`}
+                  placeholder={`Enter ${key}`}
                 />
-                {errors[key] && <p className="text-red-500 text-xs mt-1">{errors[key]}</p>}
+                {errors[key] && (
+                  <p className="text-red-500 text-xs mt-1">{errors[key]}</p>
+                )}
               </div>
             ))}
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full md:w-auto px-6 py-3 rounded-lg font-semibold shadow-md transition cursor-pointer ${
-              loading
-                ? 'bg-blue-400 text-white opacity-70 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700 text-white'
-            }`}
-          >
-            {loading ? 'Submitting...' : 'Upload Bank Details'}
-          </button>
+          {/* Submit Button */}
+          <div className="flex justify-center md:justify-end">
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full md:w-auto px-8 py-3 rounded-xl font-semibold shadow-lg transition ${
+                loading
+                  ? 'bg-pink-300 text-white opacity-70 cursor-not-allowed'
+                  : 'bg-pink-600 hover:bg-pink-700 text-white'
+              }`}
+            >
+              {loading ? 'Submitting...' : 'Upload Bank Details'}
+            </button>
+          </div>
         </form>
       </div>
     </div>

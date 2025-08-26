@@ -38,58 +38,74 @@ const Cards = () => {
     {
       title: 'Income',
       value: summary.totalIncome,
-      color: 'text-green-600',
-      borderColor: 'border-l-green-500',
-      icon: <FaArrowUp className="text-green-500 text-lg" />,
+      color: 'text-green-700',
+      bg: 'bg-gradient-to-br from-green-100 to-green-50',
+      hoverBg: 'hover:from-green-200 hover:to-green-100',
+      icon: <FaArrowUp className="text-green-600 text-xl" />,
+      barColor: 'bg-green-500'
     },
     {
       title: 'Expense',
       value: summary.totalExpense,
-      color: 'text-red-600',
-      borderColor: 'border-l-red-500',
-      icon: <FaArrowDown className="text-red-500 text-lg" />,
+      color: 'text-red-700',
+      bg: 'bg-gradient-to-br from-red-100 to-red-50',
+      hoverBg: 'hover:from-red-200 hover:to-red-100',
+      icon: <FaArrowDown className="text-red-600 text-xl" />,
+      barColor: 'bg-red-500'
     },
     {
       title: 'Net Profit',
       value: summary.netProfit,
-      color: summary.netProfit < 0 ? 'text-red-600' : 'text-green-600',
-      borderColor: summary.netProfit < 0 ? 'border-l-red-500' : 'border-l-green-500',
-      icon: <FaBalanceScale className={`text-lg ${summary.netProfit < 0 ? 'text-red-500' : 'text-green-500'}`} />,
+      color: summary.netProfit < 0 ? 'text-red-700' : 'text-pink-700',
+      bg: summary.netProfit < 0 
+        ? 'bg-gradient-to-br from-red-100 to-red-50' 
+        : 'bg-gradient-to-br from-pink-100 to-pink-50',
+      hoverBg: summary.netProfit < 0
+        ? 'hover:from-red-200 hover:to-red-100'
+        : 'hover:from-pink-200 hover:to-pink-100',
+      icon: <FaBalanceScale className={`text-xl ${summary.netProfit < 0 ? 'text-red-600' : 'text-pink-600'}`} />,
+      barColor: summary.netProfit < 0 ? 'bg-red-500' : 'bg-pink-500'
     },
     {
       title: 'Total Balance',
       value: summary.totalBalance,
-      color: 'text-blue-600',
-      borderColor: 'border-l-blue-500',
-      icon: <FaWallet className="text-blue-500 text-lg" />,
+      color: 'text-gray-900',
+      bg: 'bg-gradient-to-br from-gray-100 to-white',
+      hoverBg: 'hover:from-gray-200 hover:to-gray-50',
+      icon: <FaWallet className="text-gray-700 text-xl" />,
+      barColor: 'bg-gray-600'
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 p-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 px-4">
       {cards.map((card, index) => (
         <div
           key={index}
-          className="bg-white rounded-xl p-7 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-t border-r border-b border-gray-100 hover:-translate-y-0.5"
-          style={{ borderLeftColor: card.borderColor.replace('border-l-', '') }}
+          className={`
+            ${card.bg} ${card.hoverBg}
+            rounded-xl p-6 shadow-md hover:shadow-xl
+            transition-all duration-300 transform hover:-translate-y-1
+            border border-gray-100
+          `}
         >
           <div className="flex justify-between items-start">
             <div>
-              <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">{card.title}</h2>
-              <p className={`text-xl font-bold mt-1 ${card.color}`}>
+              <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">{card.title}</h2>
+              <p className={`text-2xl font-extrabold mt-2 ${card.color}`}>
                 {formatAmount(card.value)}
               </p>
             </div>
-            <div className="p-2 rounded-md bg-gray-100">
+            <div className="p-3 rounded-lg bg-white shadow-inner">
               {card.icon}
             </div>
           </div>
           
-          {/* Subtle progress indicator */}
-          <div className="mt-4">
+          {/* Progress Indicator */}
+          <div className="mt-5">
             <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
               <div 
-                className="h-full bg-gray-400" 
+                className={`h-full ${card.barColor} transition-all duration-500`} 
                 style={{ width: '65%' }}
               ></div>
             </div>
@@ -142,34 +158,30 @@ export default Cards;
 //     {
 //       title: 'Income',
 //       value: summary.totalIncome,
-//       color: 'text-white',
-//       bgGradient: 'from-green-500 to-emerald-600',
-//       icon: <FaArrowUp className="text-white text-xl" />,
-//       trend: 'positive',
+//       color: 'text-green-600',
+//       borderColor: 'border-l-green-500',
+//       icon: <FaArrowUp className="text-green-500 text-lg" />,
 //     },
 //     {
 //       title: 'Expense',
 //       value: summary.totalExpense,
-//       color: 'text-white',
-//       bgGradient: 'from-red-500 to-rose-600',
-//       icon: <FaArrowDown className="text-white text-xl" />,
-//       trend: 'negative',
+//       color: 'text-red-600',
+//       borderColor: 'border-l-red-500',
+//       icon: <FaArrowDown className="text-red-500 text-lg" />,
 //     },
 //     {
 //       title: 'Net Profit',
 //       value: summary.netProfit,
-//       color: summary.netProfit < 0 ? 'text-white' : 'text-white',
-//       bgGradient: summary.netProfit < 0 ? 'from-rose-700 to-red-600' : 'from-teal-600 to-emerald-700',
-//       icon: <FaBalanceScale className="text-white text-xl" />,
-//       trend: summary.netProfit < 0 ? 'negative' : 'positive',
+//       color: summary.netProfit < 0 ? 'text-red-600' : 'text-green-600',
+//       borderColor: summary.netProfit < 0 ? 'border-l-red-500' : 'border-l-green-500',
+//       icon: <FaBalanceScale className={`text-lg ${summary.netProfit < 0 ? 'text-red-500' : 'text-green-500'}`} />,
 //     },
 //     {
 //       title: 'Total Balance',
 //       value: summary.totalBalance,
-//       color: 'text-white',
-//       bgGradient: 'from-blue-600 to-indigo-700',
-//       icon: <FaWallet className="text-white text-xl" />,
-//       trend: 'neutral',
+//       color: 'text-blue-600',
+//       borderColor: 'border-l-blue-500',
+//       icon: <FaWallet className="text-blue-500 text-lg" />,
 //     },
 //   ];
 
@@ -178,26 +190,27 @@ export default Cards;
 //       {cards.map((card, index) => (
 //         <div
 //           key={index}
-//           className={`bg-gradient-to-r ${card.bgGradient} rounded-xl p-5 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1`}
+//           className="bg-white rounded-xl p-7 shadow-sm hover:shadow-md transition-all duration-300 border-l-4 border-t border-r border-b border-gray-100 hover:-translate-y-0.5"
+//           style={{ borderLeftColor: card.borderColor.replace('border-l-', '') }}
 //         >
 //           <div className="flex justify-between items-start">
 //             <div>
-//               <h2 className="text-sm font-medium text-white/90 uppercase tracking-wider">{card.title}</h2>
-//               <p className={`text-2xl font-bold mt-2 ${card.color}`}>
+//               <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">{card.title}</h2>
+//               <p className={`text-xl font-bold mt-1 ${card.color}`}>
 //                 {formatAmount(card.value)}
 //               </p>
 //             </div>
-//             <div className={`p-3 rounded-lg bg-white/10 backdrop-blur-sm`}>
+//             <div className="p-2 rounded-md bg-gray-100">
 //               {card.icon}
 //             </div>
 //           </div>
           
-//           {/* Progress indicator for visual interest */}
+//           {/* Subtle progress indicator */}
 //           <div className="mt-4">
-//             <div className="h-1 w-full bg-white/20 rounded-full overflow-hidden">
+//             <div className="h-1 w-full bg-gray-200 rounded-full overflow-hidden">
 //               <div 
-//                 className={`h-full ${card.trend === 'positive' ? 'bg-white' : card.trend === 'negative' ? 'bg-rose-200' : 'bg-blue-200'}`} 
-//                 style={{ width: card.trend === 'positive' ? '75%' : card.trend === 'negative' ? '60%' : '85%' }}
+//                 className="h-full bg-gray-400" 
+//                 style={{ width: '65%' }}
 //               ></div>
 //             </div>
 //           </div>
@@ -208,3 +221,4 @@ export default Cards;
 // };
 
 // export default Cards;
+

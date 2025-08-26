@@ -64,13 +64,37 @@ export const userInfo = async (id) => {
 
 // account by user id
 
-export const accountByUser = async(id)=>{
-    return await prisma.account.findMany({
-        where :{
-            createdById : Number(id)
-        }
-    })
-}
+export const accountByUser = async (id) => {
+    const accounts = await prisma.account.findMany({
+      where: {
+        createdById: Number(id),
+      },
+      select: {
+        id: true,
+        name: true,
+        accountNo: true,
+        address:true,
+        branch: true,
+        micr:true,
+        ifsc: true,
+        custRelnNo:true,
+        currency:true,
+        createdAt: true,
+        _count: {
+          select: {
+            transactions: true,
+          },
+        },
+      },
+    });
+  
+    // Add transactionCount as a direct property
+    return accounts.map(account => ({
+      ...account,
+      transactionCount: account._count.transactions,
+    }));
+  };
+  
 
 // Account by accountNo
 

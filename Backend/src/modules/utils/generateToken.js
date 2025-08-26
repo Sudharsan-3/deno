@@ -5,9 +5,9 @@ const generateToken = async (user)=>{
     const {id,name,email}= user
    
     const token = jwt.sign({id,name,email},secret,{
-        expiresIn : '2d',
+        expiresIn : '2days',
     })
-    return ({
+    return ({ 
         user : {
             id:id,
             name:name,

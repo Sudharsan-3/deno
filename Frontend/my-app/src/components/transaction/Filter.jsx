@@ -1,7 +1,7 @@
 "use client";
 import api from "@/lib/axios";
-import React, { useState } from "react";
-import { FaSearch, FaRedoAlt, FaFilter, FaCalendarAlt, FaFileExport } from "react-icons/fa";
+import React, { useState, useRef, useEffect } from "react";
+import { FaSearch, FaRedoAlt, FaFilter, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import DownloadExport from "../DownloadExport";
 
 const Filter = ({ setLoading, setTransactions, fetchTransactions }) => {
@@ -19,8 +19,33 @@ const Filter = ({ setLoading, setTransactions, fetchTransactions }) => {
     refNo: "",
   });
 
-  const [showDatePicker, setShowDatePicker] = useState(false);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [expandedSections, setExpandedSections] = useState({
+    dateRange: true,
+    amountRange: true,
+    otherFilters: true
+  });
+  const popupRef = useRef(null);
+
+  // Close on outside click
+  // Close on outside click (improved)
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      popupRef.current &&
+      !popupRef.current.contains(event.target) &&
+      !event.target.closest(".filter-btn") // Ignore clicks on button
+    ) {
+      setShowFilters(false);
+    }
+  };
+  if (showFilters) {
+    document.addEventListener("mousedown", handleClickOutside);
+  }
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
+}, [showFilters]);
 
   const handleFilter = async () => {
     setLoading(true);
@@ -47,6 +72,7 @@ const Filter = ({ setLoading, setTransactions, fetchTransactions }) => {
       if (res.data.data.length === 0) {
         alert("No transactions found matching your criteria.");
       }
+      setShowFilters(false);
     } catch (error) {
       console.error("Filter failed:", error);
       alert("Failed to filter transactions");
@@ -72,186 +98,256 @@ const Filter = ({ setLoading, setTransactions, fetchTransactions }) => {
     fetchTransactions();
   };
 
-  return (
-    <div className="mt-4">
-      {/* Main Filter Row */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Description Search */}
-        <div className="bg-white  rounded-lg shadow-sm p-2 border border-transparent hover:border-blue-700">
-          <input
-            type="text"
-            placeholder="Description"
-            value={filters.description}
-            onChange={(e) =>
-              setFilters({ ...filters, description: e.target.value })
-            }
-            className="px-2 py-1 text-sm focus:outline-none w-32 md:w-40"
-          />
-        </div>
+  const toggleSection = (section) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
-        {/* Date Selector with Icon */}
-        <div className="relative bg-white rounded-lg shadow-sm border border-transparent hover:border-blue-700">
-          <button 
-            className="p-2 flex items-center"
-            onClick={() => setShowDatePicker(!showDatePicker)}
-          >
-            <FaCalendarAlt className="text-gray-600" />
-          </button>
-          
-          {showDatePicker && (
-            <div className="absolute top-full left-0 mt-1 bg-white p-3 rounded-lg shadow-lg border border-transparent hover:border-blue-700 z-10 w-64">
-              <div className="mb-2">
-                <label className="block text-xs text-gray-600 mb-1">Specific Date</label>
-                <input
-                  type="date"
-                  value={filters.date}
-                  onChange={(e) => setFilters({ ...filters, date: e.target.value })}
-                  className="w-full border border-transparent hover:border-blue-700 px-2 py-1 rounded text-sm"
-                />
+  return (
+    <div className="relative flex items-center gap-4">
+      {/* Filter Button */}
+
+      
+      <button
+  onClick={(e) => {
+    e.stopPropagation(); // Prevent closing immediately
+    setShowFilters((prev) => !prev);
+  }}
+  className="filter-btn bg-pink-500 rounded-full text-white py-2 px-4 flex items-center justify-center gap-2 hover:bg-pink-600 transition shadow-md"
+>
+  <FaFilter size={15} />
+  Filter
+  {showFilters ? <FaChevronUp size={12} /> : <FaChevronDown size={12} />}
+</button>
+
+      {/* Download Export Button */}
+      <DownloadExport
+        filters={filters}
+        className="bg-blue-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-600 transition shadow-md"
+      />
+
+      {/* Popup Panel */}
+      {showFilters && (
+        <div
+          ref={popupRef}
+          className="absolute top-full right-0 mt-2 w-96 bg-white shadow-xl border border-pink-200 rounded-lg z-50"
+        >
+          {/* Header */}
+          <div className="flex justify-between items-center p-4 bg-pink-50 border-b border-pink-200 rounded-t-lg">
+            <h2 className="text-pink-700 font-bold text-lg flex items-center gap-2">
+              <FaFilter className="text-pink-600" />
+              Filter Transactions
+            </h2>
+            <button
+              onClick={() => setShowFilters(false)}
+              className="text-pink-500 hover:text-red-600 text-lg transition-colors"
+            >
+              <FaTimes />
+            </button>
+          </div>
+
+          {/* Filter Content */}
+          <div className="p-4 max-h-96 overflow-y-auto">
+            {/* Search Term */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Description
+              </label>
+              <input
+                type="text"
+                placeholder="Search by description"
+                value={filters.description}
+                onChange={(e) =>
+                  setFilters({ ...filters, description: e.target.value })
+                }
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-pink-300 focus:border-pink-400"
+              />
+            </div>
+
+            {/* Reference Number */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reference Number
+              </label>
+              <input
+                type="text"
+                placeholder="Enter reference number"
+                value={filters.refNo}
+                onChange={(e) => setFilters({ ...filters, refNo: e.target.value })}
+                className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm focus:ring-2 focus:ring-pink-300 focus:border-pink-400"
+              />
+            </div>
+
+            {/* Date Range Section */}
+            <div className="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                className="flex justify-between items-center p-3 bg-gray-50 cursor-pointer"
+                onClick={() => toggleSection('dateRange')}
+              >
+                <h3 className="font-medium text-gray-700">Date Range</h3>
+                {expandedSections.dateRange ? <FaChevronUp /> : <FaChevronDown />}
               </div>
               
-              <div className="grid grid-cols-2 gap-2 mt-2">
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">Start Date</label>
-                  <input
-                    type="date"
-                    value={filters.startDate}
-                    onChange={(e) => setFilters({ ...filters, startDate: e.target.value })}
-                    className="w-full border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer px-2 py-1 rounded text-sm"
-                  />
+              {expandedSections.dateRange && (
+                <div className="p-3 space-y-3">
+                  <div>
+                    <label className="block text-sm text-gray-600 mb-1">Single Date</label>
+                    <input
+                      type="date"
+                      value={filters.date}
+                      onChange={(e) => setFilters({ ...filters, date: e.target.value })}
+                      className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Start Date</label>
+                      <input
+                        type="date"
+                        value={filters.startDate}
+                        onChange={(e) =>
+                          setFilters({ ...filters, startDate: e.target.value })
+                        }
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">End Date</label>
+                      <input
+                        type="date"
+                        value={filters.endDate}
+                        onChange={(e) =>
+                          setFilters({ ...filters, endDate: e.target.value })
+                        }
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-xs text-gray-600 mb-1">End Date</label>
-                  <input
-                    type="date"
-                    value={filters.endDate}
-                    onChange={(e) => setFilters({ ...filters, endDate: e.target.value })}
-                    className="w-full border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer px-2 py-1 rounded text-sm"
-                  />
-                </div>
+              )}
+            </div>
+
+            {/* Amount Range Section */}
+            <div className="mb-4 border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                className="flex justify-between items-center p-3 bg-gray-50 cursor-pointer"
+                onClick={() => toggleSection('amountRange')}
+              >
+                <h3 className="font-medium text-gray-700">Amount Range</h3>
+                {expandedSections.amountRange ? <FaChevronUp /> : <FaChevronDown />}
               </div>
+              
+              {expandedSections.amountRange && (
+                <div className="p-3 space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Credit Min</label>
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.crMin}
+                        onChange={(e) => setFilters({ ...filters, crMin: e.target.value })}
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Credit Max</label>
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.crMax}
+                        onChange={(e) => setFilters({ ...filters, crMax: e.target.value })}
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Debit Min</label>
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={filters.drMin}
+                        onChange={(e) => setFilters({ ...filters, drMin: e.target.value })}
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-600 mb-1">Debit Max</label>
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={filters.drMax}
+                        onChange={(e) => setFilters({ ...filters, drMax: e.target.value })}
+                        className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
 
-        {/* Transaction Type */}
-        <div className="bg-white rounded-lg shadow-sm border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer">
-          <select
-            value={filters.tt}
-            onChange={(e) => setFilters({ ...filters, tt: e.target.value })}
-            className="px-3 py-1.5 rounded-lg text-sm focus:outline-none"
-          >
-            <option value="">All Types</option>
-            <option value="CR">Credit</option>
-            <option value="DR">Debit</option>
-          </select>
-        </div>
-
-        {/* Attachment Filter */}
-        <div className="bg-white rounded-lg shadow-sm p-2 border border-transparent hover:border-blue-700 hover:text-blue-700  flex items-center">
-          <label className="flex items-center gap-1 text-sm">
-            <input
-              type="checkbox"
-              checked={filters.attachment}
-              onChange={(e) =>
-                setFilters({ ...filters, attachment: e.target.checked })
-              }
-              className="w-4 h-4 accent-blue-500 hover:cursor-pointer"
-            />
-            <span className="hidden md:inline">With Files</span>
-            <span className="md:hidden">Files</span>
-          </label>
-        </div>
-
-        {/* Reference Number */}
-        <div className="bg-white rounded-lg shadow-sm p-1 border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer">
-          <input
-            type="text"
-            placeholder="Ref No."
-            value={filters.refNo || ""}
-            onChange={(e) => setFilters({ ...filters, refNo: e.target.value })}
-            className="px-2 py-1 text-sm focus:outline-none w-20 md:w-28"
-          />
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          <button 
-            onClick={handleFilter} 
-            className="bg-white border flex items-center justify-center gap-1 text-black px-3 py-1.5 rounded-lg text-sm border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer shadow-sm"
-          >
-            <FaSearch size={12} /> 
-            <span className="hidden md:inline">Apply</span>
-          </button>
-          
-          <button 
-            onClick={resetFilters} 
-            className="bg-white flex items-center justify-center gap-1 text-black px-3 py-1.5 rounded-lg text-sm  shadow-sm border border-transparent hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer"
-          >
-            <FaRedoAlt size={12} /> 
-            <span className="hidden md:inline">Reset</span>
-          </button>
-          
-          <button 
-            onClick={() => setShowAdvanced(!showAdvanced)} 
-            className="bg-white flex items-center justify-center gap-1 text-black px-3 py-1.5 rounded-lg text-sm border-transparent border hover:border-blue-700 hover:text-blue-700 hover:cursor-pointer"
-          >
-            <FaFilter size={12} /> 
-            <span className="hidden md:inline">More</span>
-          </button>
-
-          <DownloadExport filters={filters} />
-        </div>
-      </div>
-
-      {/* Advanced Filters */}
-      {showAdvanced && (
-        <div className="mt-3 bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-          <h3 className="text-sm font-medium text-gray-800 mb-3">Amount Filters</h3>
-          <div className="flex flex-wrap gap-4">
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Credit Min</label>
-              <input
-                type="number"
-                placeholder="Min"
-                value={filters.crMin}
-                onChange={(e) => setFilters({ ...filters, crMin: e.target.value })}
-                className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm"
-              />
+            {/* Other Filters Section */}
+            <div className="border border-gray-200 rounded-lg overflow-hidden">
+              <div 
+                className="flex justify-between items-center p-3 bg-gray-50 cursor-pointer"
+                onClick={() => toggleSection('otherFilters')}
+              >
+                <h3 className="font-medium text-gray-700">Other Filters</h3>
+                {expandedSections.otherFilters ? <FaChevronUp /> : <FaChevronDown />}
+              </div>
+              
+              {expandedSections.otherFilters && (
+                <div className="p-3 space-y-3">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+                    <select
+                      value={filters.tt}
+                      onChange={(e) => setFilters({ ...filters, tt: e.target.value })}
+                      className="w-full border border-gray-300 px-3 py-2 rounded-lg text-sm"
+                    >
+                      <option value="">All Types</option>
+                      <option value="CR">Credit</option>
+                      <option value="DR">Debit</option>
+                    </select>
+                  </div>
+                  
+                  <label className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={filters.attachment}
+                      onChange={(e) =>
+                        setFilters({ ...filters, attachment: e.target.checked })
+                      }
+                      className="w-4 h-4 accent-pink-500"
+                    />
+                    Only transactions with attachments
+                  </label>
+                </div>
+              )}
             </div>
-            
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Credit Max</label>
-              <input
-                type="number"
-                placeholder="Max"
-                value={filters.crMax}
-                onChange={(e) => setFilters({ ...filters, crMax: e.target.value })}
-                className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Debit Min</label>
-              <input
-                type="number"
-                placeholder="Min"
-                value={filters.drMin}
-                onChange={(e) => setFilters({ ...filters, drMin: e.target.value })}
-                className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm"
-              />
-            </div>
-            
-            <div>
-              <label className="block text-xs text-gray-600 mb-1">Debit Max</label>
-              <input
-                type="number"
-                placeholder="Max"
-                value={filters.drMax}
-                onChange={(e) => setFilters({ ...filters, drMax: e.target.value })}
-                className="border border-gray-300 px-3 py-1.5 rounded-lg text-sm"
-              />
-            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="flex justify-between p-4 bg-gray-50 border-t border-gray-200 rounded-b-lg">
+            <button
+              onClick={resetFilters}
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-800 px-3 py-2 rounded-lg transition-colors"
+            >
+              <FaRedoAlt />
+              Reset All
+            </button>
+            <button
+              onClick={handleFilter}
+              className="bg-pink-500 text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-pink-600 transition shadow-md"
+            >
+              <FaSearch />
+              Apply Filters
+            </button>
           </div>
         </div>
       )}

@@ -11,15 +11,15 @@ import ShowUpload from "./transaction/ShowUpload";
 import PreviewImage from "./transaction/PreviewImage";
 import ShowAttachemnts from "./transaction/ShowAttachemnts";
 import Image from "next/image";
-import viewLogo from "@/app/public/show-svgrepo-com.svg"
-import hideLog from "@/app/public/hide-svgrepo-com.svg"
+import viewLogo from "@/app/public/show-svgrepo-com.svg";
+import hideLog from "@/app/public/hide-svgrepo-com.svg";
 import Upload from "./transaction/Upload";
 import Link from "next/link";
-
+import DownloadExport from "./DownloadExport";
 
 const transactionHeading = [
   "",
-  
+
   "Transaction Date",
   "ChequeOrRef",
   "Value Date",
@@ -44,11 +44,9 @@ const Transactions = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadTxnId, setUploadTxnId] = useState(null);
 
-
-
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const itemsPerPage = 10;
 
   const fetchTransactions = async () => {
@@ -97,7 +95,6 @@ const Transactions = () => {
       alert("Error deleting transactions");
     }
   };
-   
 
   const closeModal = () => setPreviewImage(null);
 
@@ -108,197 +105,247 @@ const Transactions = () => {
   const totalPages = Math.ceil(transactions.length / itemsPerPage);
 
   return (
-    <div className="p-6 overflow-x-auto relative">
-  {/* Filter */}
-  <Filter
-    fetchTransactions={fetchTransactions}
-    setLoading={setLoading}
-    setTransactions={setTransactions}
-  />
+    <div className="px-5 overflow-x-auto relative">
+      {/* Top Actions */}
+    
 
-  {/* Top Actions */}
-  <div className="flex gap-3 mb-4 pt-4">
-    <button
-      className="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 hover:bg-red-700 transition"
-      disabled={selectedIds.length === 0}
-      onClick={handleDeleteSelected}
-    >
-      Delete Selected
-    </button>
-    <Upload />
-  </div>
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-4 bg-transparent shadow-md rounded-lg">
+  {/* Title */}
+  <h2 className="text-xl md:text-2xl font-bold text-gray-800 flex items-center">
+    
+    All Transactions
+  </h2>
 
-  <h2 className="text-2xl font-bold mb-4">All Transactions</h2>
-
-  {loading ? (
-    <p className="text-gray-500">Loading...</p>
-  ) : currentTransactions.length === 0 ? (
-    <p className="text-gray-500 italic">No transactions found.</p>
-  ) : (
-    <div className="bg-white rounded-xl shadow overflow-x-auto border border-gray-200">
-      <table className="min-w-full table-auto">
-        <thead className="bg-gray-100 text-gray-700 text-sm uppercase">
-          <tr>
-            {transactionHeading.map((title, i) => (
-              <th
-                key={i}
-                className="text-left px-6 py-3 font-semibold tracking-wide"
-              >
-                {title}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {currentTransactions.map((txn, i) => (
-            <tr
-              key={txn.id}
-              className={`hover:bg-gray-50 transition ${
-                i % 2 === 0 ? "bg-white" : "bg-gray-50"
-              }`}
-            >
-              {/* Checkbox */}
-              <td className="px-6 py-3">
-                <input
-                  type="checkbox"
-                  className="w-4 h-4 cursor-pointer accent-blue-600"
-                  checked={selectedIds.includes(txn.id)}
-                  onChange={() => handleCheckboxChange(txn.id)}
-                />
-              </td>
-
-              <td className="px-6 py-3">{formatDate(txn.transactionDate)}</td>
-              <td className="px-6 py-3">{txn.chequeOrRef}</td>
-              <td className="px-6 py-3">{formatDate(txn.valueDate)}</td>
-              <td className="px-6 py-3">{txn.description}</td>
-              <td className="px-6 py-3 font-semibold text-green-700">
-                ₹{txn.amount.toLocaleString()}
-              </td>
-              <td className="px-6 py-3">{txn.amountType}</td>
-              <td className="px-6 py-3">₹{txn.balance.toLocaleString()}</td>
-              <td className="px-6 py-3">{txn.balanceType}</td>
-              <td className="px-6 py-3">{txn.invoice}</td>
-
-              {/* Attachments Section */}
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() =>
-                      setShowAttachments((prev) => ({
-                        ...prev,
-                        [txn.id]: !prev[txn.id],
-                      }))
-                    }
-                    title="View Attachments"
-                    className="hover:opacity-80 transition cursor-pointer"
-                  >
-                    {showAttachments[txn.id] ? (
-                      <Image src={hideLog} alt="Hide" className="w-4 h-4" />
-                    ) : (
-                      <Image src={viewLogo} alt="View" className="w-4 h-4" />
-                    )}
-                  </button>
-                </div>
-
-                {/* Expandable Section */}
-                <div
-                  className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                    showAttachments[txn.id]
-                      ? "max-h-96 opacity-100 mt-2"
-                      : "max-h-0 opacity-0"
-                  }`}
-                >
-                  {txn.files?.length > 0 && <ShowAttachemnts txn={txn} />}
-                </div>
-              </td>
-
-              {/* Actions */}
-              <td className="px-6 py-3">
-                <div className="flex items-center gap-3">
-                  {/* Add Attachment */}
-                  <button
-                    onClick={() => {
-                      setUploadTxnId(txn.id);
-                      setShowUploadModal(true);
-                    }}
-                    title="Add Attachment"
-                    className="text-blue-600 hover:text-blue-800 transition cursor-pointer"
-                  >
-                    <RiAddCircleLine size={18} />
-                  </button>
-
-                  {/* Edit Button */}
-                  <button
-                    onClick={() => {
-                      setSelectedTxn(txn);
-                      setIsPopupOpen(true);
-                    }}
-                    title="Edit Transaction"
-                    className="text-gray-600 hover:text-gray-800 transition cursor-pointer"
-                  >
-                    ✏️
-                  </button>
-
-                  {/* Snapshot */}
-                  <Link href={`/snapshots?id=${txn?.id}`} title="View Snapshot">
-                    <button className="text-gray-600 hover:text-gray-800 transition cursor-pointer">
-                      📷
-                    </button>
-                  </Link>
-                </div>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      {/* Pagination */}
-      <div className="flex justify-center gap-5 items-center p-4 bg-gray-50 border-t">
-        <button
-          onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-          className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition"
-        >
-          Back
-        </button>
-        <span className="text-sm text-gray-600">
-          Page {currentPage} of {totalPages}
-        </span>
-        <button
-          onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-          className="px-4 py-2 bg-gray-200 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-300 transition"
-        >
-          Next
-        </button>
+  {/* Right Section */}
+  <div className="flex flex-col xs:flex-row justify-end items-stretch xs:items-center gap-3 w-full md:w-auto">
+    {/* Action Buttons Container */}
+    <div className="flex flex-wrap justify-start xs:justify-end items-center gap-3">
+      {/* Upload */}
+      <div className="flex-shrink-0">
+        <Upload />
       </div>
+
+      {/* Filter */}
+      <div className="flex-shrink-0">
+        <Filter
+          fetchTransactions={fetchTransactions}
+          setLoading={setLoading}
+          setTransactions={setTransactions}
+        />
+      </div>
+
+      {/* Delete Button */}
+      <button
+        className="bg-pink-600 hover:bg-pink-700 text-white rounded-xl px-4 py-2 text-sm md:text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 whitespace-nowrap shadow-md flex items-center justify-center min-h-[40px] min-w-[90px]"
+        disabled={selectedIds.length === 0}
+        onClick={handleDeleteSelected}
+      >
+        {selectedIds.length > 0 ? (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Delete ({selectedIds.length})
+          </>
+        ) : (
+          "Delete"
+        )}
+      </button>
     </div>
-  )}
-
-  {previewImage && (
-    <PreviewImage previewImage={previewImage} closeModal={closeModal} />
-  )}
-
-  {showUploadModal && (
-    <ShowUpload
-      setUploadTxnId={setUploadTxnId}
-      uploadTxnId={uploadTxnId}
-      fetchTransactions={fetchTransactions}
-      setShowUploadModal={setShowUploadModal}
-    />
-  )}
-
-  {/* ✅ Edit Popup */}
-  {isPopupOpen && (
-    <EditPopup
-      isOpen={isPopupOpen}
-      data={selectedTxn}
-      onClose={() => setIsPopupOpen(false)}
-      onUpdated={fetchTransactions}
-    />
-  )}
+    
+    {/* Selected count for mobile */}
+    {selectedIds.length > 0 && (
+      <div className="xs:hidden bg-pink-100 text-pink-800 px-3 py-2 rounded-lg text-sm font-medium">
+        {selectedIds.length} item{selectedIds.length !== 1 ? 's' : ''} selected
+      </div>
+    )}
+  </div>
 </div>
 
+
+      
+
+      {loading ? (
+        <p className="text-gray-500">Loading...</p>
+      ) : currentTransactions.length === 0 ? (
+        <p className="text-gray-500 italic">No transactions found.</p>
+      ) : (
+        <div className="bg-white rounded-xl shadow-lg overflow-x-auto border border-gray-200">
+        <table className="min-w-full table-auto">
+          {/* Table Header */}
+          <thead className="bg-pink-100 text-pink-800 text-sm uppercase">
+            <tr>
+              {transactionHeading.map((title, i) => (
+                <th
+                  key={i}
+                  className="text-left px-6 py-3 font-semibold tracking-wide border-b border-pink-200"
+                >
+                  {title}
+                </th>
+              ))}
+            </tr>
+          </thead>
+      
+          {/* Table Body */}
+          <tbody>
+            {currentTransactions.map((txn, i) => (
+              <tr
+                key={txn.id}
+                className={`hover:bg-pink-50 transition ${
+                  i % 2 === 0 ? "bg-white" : "bg-gray-50"
+                }`}
+              >
+                {/* Checkbox */}
+                <td className="px-6 py-3">
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 cursor-pointer accent-pink-600"
+                    checked={selectedIds.includes(txn.id)}
+                    onChange={() => handleCheckboxChange(txn.id)}
+                  />
+                </td>
+      
+                {/* Transaction Details */}
+                <td className="px-6 py-3 text-gray-700">{formatDate(txn.transactionDate)}</td>
+                <td className="px-6 py-3 text-gray-700">{txn.chequeOrRef}</td>
+                <td className="px-6 py-3 text-gray-700">{formatDate(txn.valueDate)}</td>
+                <td className="px-6 py-3 text-gray-800 font-medium">{txn.description}</td>
+                <td
+                  className={`px-6 py-3 font-semibold ${
+                    txn.amountType === "Credit" ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  ₹{txn.amount.toLocaleString()}
+                </td>
+                <td className="px-6 py-3 text-gray-700">{txn.amountType}</td>
+                <td className="px-6 py-3 text-gray-700">₹{txn.balance.toLocaleString()}</td>
+                <td className="px-6 py-3 text-gray-700">{txn.balanceType}</td>
+                <td className="px-6 py-3 text-gray-600">{txn.invoice}</td>
+      
+                {/* Attachments Section */}
+                <td className="px-6 py-3">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() =>
+                        setShowAttachments((prev) => ({
+                          ...prev,
+                          [txn.id]: !prev[txn.id],
+                        }))
+                      }
+                      title="View Attachments"
+                      className="hover:opacity-80 transition cursor-pointer"
+                    >
+                      {showAttachments[txn.id] ? (
+                        <Image src={hideLog} alt="Hide" className="w-4 h-4" />
+                      ) : (
+                        <Image src={viewLogo} alt="View" className="w-4 h-4" />
+                      )}
+                    </button>
+                  </div>
+      
+                  {/* Expandable Section */}
+                  <div
+                    className={`transition-all duration-500 ease-in-out overflow-hidden ${
+                      showAttachments[txn.id]
+                        ? "max-h-96 opacity-100 mt-2"
+                        : "max-h-0 opacity-0"
+                    }`}
+                  >
+                    {txn.files?.length > 0 && <ShowAttachemnts txn={txn} />}
+                  </div>
+                </td>
+      
+                {/* Actions */}
+                <td className="px-6 py-3">
+                  <div className="flex items-center gap-3">
+                    {/* Add Attachment */}
+                    <button
+                      onClick={() => {
+                        setUploadTxnId(txn.id);
+                        setShowUploadModal(true);
+                      }}
+                      title="Add Attachment"
+                      className="text-pink-600 hover:text-pink-800 transition cursor-pointer"
+                    >
+                      <RiAddCircleLine size={18} />
+                    </button>
+      
+                    {/* Edit Button */}
+                    <button
+                      onClick={() => {
+                        setSelectedTxn(txn);
+                        setIsPopupOpen(true);
+                      }}
+                      title="Edit Transaction"
+                      className="text-gray-600 hover:text-black transition cursor-pointer"
+                    >
+                      ✏️
+                    </button>
+      
+                    {/* Snapshot */}
+                    <Link href={`/snapshots?id=${txn?.id}`} title="View Snapshot">
+                      <button className="text-gray-600 hover:text-black transition cursor-pointer">
+                        📷
+                      </button>
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      
+        {/* Pagination */}
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4 p-4 bg-gray-50 border-t">
+          <span className="text-sm text-gray-600">
+            Page {currentPage} of {totalPages}
+          </span>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-pink-700 transition"
+            >
+              Back
+            </button>
+            <button
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+              }
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-pink-600 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed hover:bg-pink-700 transition"
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      )}
+
+      {previewImage && (
+        <PreviewImage previewImage={previewImage} closeModal={closeModal} />
+      )}
+
+      {showUploadModal && (
+        <ShowUpload
+          setUploadTxnId={setUploadTxnId}
+          uploadTxnId={uploadTxnId}
+          fetchTransactions={fetchTransactions}
+          setShowUploadModal={setShowUploadModal}
+        />
+      )}
+
+      {/* ✅ Edit Popup */}
+      {isPopupOpen && (
+        <EditPopup
+          isOpen={isPopupOpen}
+          data={selectedTxn}
+          onClose={() => setIsPopupOpen(false)}
+          onUpdated={fetchTransactions}
+        />
+      )}
+    </div>
   );
 };
 

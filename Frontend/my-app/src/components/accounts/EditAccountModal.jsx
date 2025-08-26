@@ -44,8 +44,8 @@ const EditAccountModal = ({ account, onClose, onUpdateSuccess }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-300 bg-blend-lighten bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-lg">
+    <div className="fixed inset-0 bg-transparent  bg-blend-lighten bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg p-6 w-full max-w-lg border border-pink-700">
         <h2 className="text-xl font-bold mb-4">Edit Account Details</h2>
         <div className="grid grid-cols-2 gap-4">
           <input
