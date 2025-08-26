@@ -2,8 +2,10 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import api from "@/lib/axios";
+import { useRouter } from 'next/navigation';
 
 export const TransactionSnapshot = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [snap, setSnap] = useState([]);
@@ -24,6 +26,9 @@ export const TransactionSnapshot = () => {
 
   return (
     <div className="p-6">
+      <button type="button" onClick={() => router.back()}>
+          Go Back
+        </button>
       <h1 className="text-2xl font-bold mb-6 text-gray-800">
         Transaction Snapshot
       </h1>
