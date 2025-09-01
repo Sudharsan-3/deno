@@ -1,6 +1,7 @@
 "use client";
 
-import api from "@/lib/axios";
+// import api from "@/lib/axios";
+import api from "../lib/axios"
 import React, { useEffect, useState } from "react";
 import { FiRefreshCw } from "react-icons/fi";
 

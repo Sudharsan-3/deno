@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import api from "@/lib/axios";
+// import api from "@/lib/axios";
+import api from "../lib/axios"
 
 const fields = [
   { key: "transactionDate", label: "Transaction Date", type: "date" },

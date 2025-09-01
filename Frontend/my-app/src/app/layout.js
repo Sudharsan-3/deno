@@ -2,8 +2,10 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import ReduxProvider from "@/providers/ReduxProvider";
-import { AuthProvider } from "@/context/AuthContext"; // ✅ Auth context
+// import ReduxProvider from "@/providers/ReduxProvider";
+// import { AuthProvider } from "@/context/AuthContext"; // ✅ Auth context
+import { AuthProvider } from "../context/AuthContext";
+import ReduxProvider  from "../providers/ReduxProvider.jsx";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

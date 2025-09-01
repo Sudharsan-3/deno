@@ -23,16 +23,16 @@ export const updateTransactionWithSnapshot = async (id, updateData, createdById,
 
 // Get all transactions 
 
-export const getTransaction = async () => {
-  const data = await transactionRepository.getAllTransactionInuse();
+export const getTransaction = async (id) => {
+  const data = await transactionRepository.getAllTransactionInuse(id);
 
   return data
 }
 
 // get transaction histroy
 
-export const transactionHistroy = async () => {
-  const data = await transactionRepository.getAllTransactionDeleted();
+export const transactionHistroy = async (id) => {
+  const data = await transactionRepository.getAllTransactionDeleted(id);
   return data;
 }
 
@@ -64,13 +64,16 @@ export const deleteAllTransacions = async () => {
 
 // Get transaction summary
 
-export const transactionSummary = async () => {
-  const data = await transactionRepository.getAllTransactionInuse();
+export const transactionSummary = async (id) => {
+  const data = await transactionRepository.getAllTransactionInuse(id);
+
+  // console.log(data,"from the transaction.summary")
   if (data.length === 0) {
     const error = new Error("No transaction founded");
     error.statusCode = 404;
     throw error
   }
+  
 
   let totalIncome = 0;
   let totalExpense = 0;
@@ -244,8 +247,9 @@ export const transactionFilter = async ({
   attachment,
   startDate,
   endDate,
+  accountId,
 }) => {
-  
+  console.log(accountId,"from bk id foraccount fileter")
 
   // Fetch all transactions
   const data = await transactionRepository.filter();
@@ -289,6 +293,8 @@ export const transactionFilter = async ({
       rangeMatch = txnDay <= end;
     }
     
+    // Filter by accaounts
+              const accountFilterById = accountId?txn?.accountId === (Number(accountId)):true;
 
     // --- Description match ---
     const descriptionMatch = description
@@ -345,7 +351,7 @@ export const transactionFilter = async ({
     }
 
     // --- Final filter ---
-    return dateMatch && rangeMatch && descriptionMatch && refNoMatch && ttMatch && attachmentMatch && amountMatch;
+    return dateMatch && rangeMatch && descriptionMatch && refNoMatch && ttMatch && attachmentMatch && amountMatch && accountFilterById;
   });
 
   return filtered.length === 0
@@ -854,5 +860,36 @@ export const getTransactionSnapshot = async (transactionId) => {
   }
 };
 
+// Delete deleteAttachments
+// import fs from "fs";
+// import path from "path";
 
+export const deleteAttachments = async (id) => {
+  // Step 1: Check if the attachment exists
+  const attachment = await transactionRepository.checkAttachment(id);
+  if (!attachment) return null;
+
+  // Step 2: Resolve the actual file path
+  const filePath = attachment.filePath; // Stored in DB
+  const fullPath = path.join(process.cwd(), "uploads", path.basename(filePath)); 
+  // If you store subfolders, adjust accordingly
+
+  // Step 3: Delete the physical file from uploads folder
+  try {
+    if (fs.existsSync(fullPath)) {
+      await fs.promises.unlink(fullPath);
+      console.log(`File deleted from disk: ${fullPath}`);
+    } else {
+      console.warn(`File not found on disk: ${fullPath}`);
+    }
+  } catch (err) {
+    console.error("Error deleting file from disk:", err);
+    throw new Error("File deletion failed");
+  }
+
+  // Step 4: Delete the DB record
+  await transactionRepository.deleteAttachments(id);
+
+  return true;
+};
 

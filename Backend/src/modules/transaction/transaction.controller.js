@@ -29,8 +29,10 @@ export const updateTransaction = async (req, res) => {
 
 // Get transactions
 export const getTransaction = async(req,res,next)=>{
+  const id= req.result.id
+  console.log(req.result.id)
     try {
-            const transactionData = await transactionService.getTransaction();
+            const transactionData = await transactionService.getTransaction(id);
             if(!transactionData){
                 return res.status(200).json({
                     success : true,
@@ -127,8 +129,9 @@ export const restoreTransaction = async(req,res,next)=>{
 // Transaction histroy
 
 export const transactionHistroy = async(req,res,next)=>{
+  const {id} = req.result
     try {
-        const data = await transactionService.transactionHistroy();
+        const data = await transactionService.transactionHistroy(id);
         if(!data){
             return res.status(404).json({
                 success : false,
@@ -148,8 +151,10 @@ export const transactionHistroy = async(req,res,next)=>{
 // Transaction summary
 
 export const transactionSummary = async (req,res,next)=>{
+  const {id} = req.result
+  console.log(id,"from the transactionSummary")
     try {
-        const data = await transactionService.transactionSummary();
+        const data = await transactionService.transactionSummary(id);
         return res.status(200).json({
             success:true,
             message:"Transaction summary loaded successfully",
@@ -404,5 +409,39 @@ export const getTransactionSnapshot = async (req, res) => {
       success: false,
       message: error.message || "Internal server error",
     });
+  }
+};
+
+
+// Delete attachments 
+
+// Delete attachment controller
+
+export const deleteAttachments = async (req, res, next) => {
+  const { id } = req.body;
+  console.log(req.body,"from delete controller")
+  if (!id) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide the file id to delete the transaction attachment",
+    });
+  }
+
+  try {
+    const isDeleted = await transactionService.deleteAttachments(id);
+
+    if (!isDeleted) {
+      return res.status(404).json({
+        success: false,
+        message: "No attachment was found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Your attachment has been successfully deleted",
+    });
+  } catch (error) {
+    next(error);
   }
 };

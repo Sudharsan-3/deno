@@ -1,21 +1,24 @@
 "use client";
 
-import api from "@/lib/axios";
+// import api from "@/lib/axios";
+import api from "../lib/axios"
 import React, { useEffect, useState } from "react";
 import EditButton from "./EditButton";
 import EditPopup from "./EditPopup";
 import { RiAddCircleLine } from "react-icons/ri";
-
+import { motion, AnimatePresence } from "framer-motion";
 import Filter from "./transaction/Filter";
 import ShowUpload from "./transaction/ShowUpload";
 import PreviewImage from "./transaction/PreviewImage";
 import ShowAttachemnts from "./transaction/ShowAttachemnts";
 import Image from "next/image";
-import viewLogo from "@/app/public/show-svgrepo-com.svg";
-import hideLog from "@/app/public/hide-svgrepo-com.svg";
+// import viewLogo from "@/app/public/show-svgrepo-com.svg";
+// import hideLog from "@/app/public/hide-svgrepo-com.svg";
 import Upload from "./transaction/Upload";
 import Link from "next/link";
 import DownloadExport from "./DownloadExport";
+import History from "./History";
+
 
 const transactionHeading = [
   "",
@@ -43,6 +46,7 @@ const Transactions = () => {
   const [showAttachments, setShowAttachments] = useState({});
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [uploadTxnId, setUploadTxnId] = useState(null);
+  const [historyShow,setHistoryShow] = useState(false)
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -119,7 +123,7 @@ const Transactions = () => {
   {/* Right Section */}
   <div className="flex flex-col xs:flex-row justify-end items-stretch xs:items-center gap-3 w-full md:w-auto">
     {/* Action Buttons Container */}
-    <div className="flex flex-wrap justify-start xs:justify-end items-center gap-3">
+    <div className="flex flex-wrap justify-start xs:justify-end  items-center gap-3">
       {/* Upload */}
       <div className="flex-shrink-0">
         <Upload />
@@ -168,7 +172,7 @@ const Transactions = () => {
       {loading ? (
         <p className="text-gray-500">Loading...</p>
       ) : currentTransactions.length === 0 ? (
-        <p className="text-gray-500 italic">No transactions found.</p>
+        <p className="text-gray-500 italic overflow-auto">No transactions found.</p>
       ) : (
         <div className="bg-white rounded-xl shadow-lg overflow-x-auto border border-gray-200">
         <table className="min-w-full table-auto">
@@ -224,35 +228,8 @@ const Transactions = () => {
       
                 {/* Attachments Section */}
                 <td className="px-6 py-3">
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={() =>
-                        setShowAttachments((prev) => ({
-                          ...prev,
-                          [txn.id]: !prev[txn.id],
-                        }))
-                      }
-                      title="View Attachments"
-                      className="hover:opacity-80 transition cursor-pointer"
-                    >
-                      {showAttachments[txn.id] ? (
-                        <Image src={hideLog} alt="Hide" className="w-4 h-4" />
-                      ) : (
-                        <Image src={viewLogo} alt="View" className="w-4 h-4" />
-                      )}
-                    </button>
-                  </div>
-      
-                  {/* Expandable Section */}
-                  <div
-                    className={`transition-all duration-500 ease-in-out overflow-hidden ${
-                      showAttachments[txn.id]
-                        ? "max-h-96 opacity-100 mt-2"
-                        : "max-h-0 opacity-0"
-                    }`}
-                  >
-                    {txn.files?.length > 0 && <ShowAttachemnts txn={txn} />}
-                  </div>
+                <ShowAttachemnts txn={txn} />
+                  
                 </td>
       
                 {/* Actions */}
@@ -345,8 +322,47 @@ const Transactions = () => {
           onUpdated={fetchTransactions}
         />
       )}
+     
+     <div className="flex flex-col items-center mt-6">
+      {/* Toggle Button */}
+      <button
+        onClick={() => setHistoryShow(!historyShow)}
+        className="px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition duration-300 shadow-md"
+      >
+        {historyShow ? "Hide History" : "Show History"}
+      </button>
+
+      {/* Animated History Section */}
+      <AnimatePresence>
+        {historyShow && (
+          <motion.div
+            key="history"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+            className="overflow-hidden w-full mt-4"
+          >
+            <div className="bg-white rounded-lg shadow-lg p-4 border border-gray-200">
+              <History />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+
+        {/* {
+          historyShow?(<div>
+      <History /> <button onClick={()=>setHistoryShow(false)} >Hide history</button>
+     </div> ): (<button onClick={()=>setHistoryShow(true)}>Show history</button>)
+          
+        } */}
+      
+
+      
     </div>
   );
+
 };
 
 const formatDate = (dateStr) => {

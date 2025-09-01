@@ -1,6 +1,7 @@
 'use client'
 
-import api from '@/lib/axios'
+// import api from '@/lib/axios'
+import api from "../lib/axios"
 import React, { useEffect, useState } from 'react'
 import { FaArrowUp, FaArrowDown, FaBalanceScale, FaWallet } from 'react-icons/fa'
 
@@ -14,12 +15,8 @@ const formatAmount = (amount) => {
 };
 
 const Cards = () => {
-  const [summary, setSummary] = useState({
-    totalIncome: 0,
-    totalExpense: 0,
-    netProfit: 0,
-    totalBalance: 0,
-  });
+  const [summary, setSummary] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getSummary = async () => {
@@ -28,11 +25,33 @@ const Cards = () => {
         setSummary(res.data.data);
       } catch (error) {
         console.error("Error fetching summary:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     getSummary();
   }, []);
+
+  // If still loading
+  if (loading) {
+    return <div className="text-center py-10 text-gray-500">Loading summary...</div>;
+  }
+
+  // If no summary or all values are zero
+  if (
+    !summary ||
+    (summary.totalIncome === 0 &&
+     summary.totalExpense === 0 &&
+     summary.netProfit === 0 &&
+     summary.totalBalance === 0)
+  ) {
+    return (
+      <div className="text-center py-10 text-gray-500 font-semibold text-lg">
+        No transactions to show
+      </div>
+    );
+  }
 
   const cards = [
     {
@@ -117,6 +136,7 @@ const Cards = () => {
 };
 
 export default Cards;
+
 
 // 'use client'
 
