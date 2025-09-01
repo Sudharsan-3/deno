@@ -1,12 +1,12 @@
-import Transactions from '@/components/Transactions'
-import React from 'react'
+import ViewAccounts from '@/components/accounts/ViewAccounts'
 import Header from '@/components/layouts/Header'
+import React from 'react'
+
 const page = () => {
   return (
     <div>
-      <Header />
-      
-        <Transactions />
+        <Header />
+        <ViewAccounts />
       
     </div>
   )

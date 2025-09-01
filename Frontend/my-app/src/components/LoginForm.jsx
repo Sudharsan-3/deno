@@ -79,12 +79,12 @@ export default function LoginForm() {
           </button>
 
           {/* Register Link */}
-          <p className="text-center text-sm text-gray-600 mt-4">
+          {/* <p className="text-center text-sm text-gray-600 mt-4">
             Don’t have an account?{' '}
             <Link href="/register" className="text-blue-600 font-medium hover:underline">
               Register here
             </Link>
-          </p>
+          </p> */}
         </form>
       </div>
     </div>

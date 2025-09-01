@@ -7,6 +7,8 @@ import Cards from './Cards'
 import Transactions from './Transactions'
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTransactions } from '@/redux/features/transaction/transaactionSlice'
+// import { fetchTransactions } from '../redux/features/transaction/transaactionSlice'
+import AccountInfos from './accounts/AccountInfos'
 
 // import Upload from './transaction/Upload'
 
@@ -31,11 +33,13 @@ const Home = () => {
   return (
     <div>
       <Header />
+      
       <Cards />
 
       {/* <Upload /> */}
 
       <Transactions />
+      <AccountInfos />
     </div>
   )
 }

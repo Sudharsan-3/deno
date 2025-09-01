@@ -34,5 +34,6 @@ router.post("/export-zip", exportTransactionsZipController);
 
 router.post("/getTramsactionSnapshot",transactionController.getTransactionSnapshot)
 
+router.delete("/deleteAttachment", verifyToken, transactionController.deleteAttachments);
 
 export default router;  

@@ -1,7 +1,9 @@
 "use client";
 
-import { useAuth } from "@/context/AuthContext";
-import api from "@/lib/axios";
+// import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+// import api from "@/lib/axios";
+import api from "../lib/axios"
 import React, { useState, useRef, useEffect } from "react";
 import { FaChevronDown } from "react-icons/fa";
 

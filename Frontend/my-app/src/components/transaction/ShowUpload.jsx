@@ -1,5 +1,6 @@
 "use client"
-import api from '@/lib/axios';
+// import api from '@/lib/axios';
+import api from "../../lib/axios"
 import React, { useState } from 'react'
 
 const ShowUpload = ({  setUploadTxnId,uploadTxnId,fetchTransactions,setShowUploadModal}) => {

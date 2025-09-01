@@ -1,8 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import api from "@/lib/axios";
-import { useAuth } from "@/context/AuthContext";
+// import api from "@/lib/axios";
+import api from "../lib/axios"
+
+import { useAuth } from "../context/AuthContext";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 export default function UploadTransaction({ setShow }) {
@@ -54,10 +56,10 @@ export default function UploadTransaction({ setShow }) {
   return (
     <div className="p-6 max-w-lg mx-auto">
       <div className="bg-white shadow-lg rounded-2xl p-8">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+        {/* <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           <FaCloudUploadAlt className="inline-block mr-2 text-blue-600 text-3xl" />
           Upload Transactions
-        </h2>
+        </h2> */}
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* File Input */}

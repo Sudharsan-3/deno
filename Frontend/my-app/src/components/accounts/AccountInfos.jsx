@@ -1,12 +1,26 @@
 "use client";
 
-import api from "@/lib/axios";
+// import api from "@/lib/axios";
+import api from "../../lib/axios"
 import React, { useEffect, useState } from "react";
 import { FaWallet, FaExchangeAlt, FaClipboardList, FaTrashAlt, FaHistory } from "react-icons/fa";
+
+import { useDispatch, useSelector } from "react-redux";
+import { getUserInfo } from "@/redux/features/userData/userInFoSlice";
 
 const AccountInfos = () => {
   const [user, setUser] = useState(null);
 
+  const dispatch = useDispatch();
+  const { userInfo, loading, error } = useSelector((state) => state.userInfo);
+
+  useEffect(() => {
+    dispatch(getUserInfo());
+  }, [dispatch]);
+
+  if (loading)  <p>Loading...</p>;
+  if (error)  <p>Error: {error}</p>;
+  console.log(userInfo, "from userinfo ui")
   useEffect(() => {
     const userInfo = async () => {
       try {
@@ -60,8 +74,8 @@ const AccountInfos = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-10">
       {/* Header */}
-      <h1 className="text-4xl font-extrabold text-center mb-8 text-black">
-        Dashboard Overview
+      <h1 className="text-4xl font-extrabold  mb-8 text-black">
+        Account Overview
       </h1>
 
       {/* Stats Grid */}

@@ -50,9 +50,10 @@ export const createTransactionSnapshot = async (transaction, createdById, reason
 
 // Get all transactions from db 
 
-export const getAllTransactionInuse = async () => {
+export const getAllTransactionInuse = async (id) => {
   return prisma.transaction.findMany({
     where: {
+      createdById:Number(id),
       type: {
         equals: "inuse",
         mode: 'insensitive'
@@ -69,9 +70,10 @@ export const getAllTransactionInuse = async () => {
 
 // getAllTransactionDeleted
 
-export const getAllTransactionDeleted = async () => {
+export const getAllTransactionDeleted = async (id) => {
   return prisma.transaction.findMany({
     where: {
+      createdById : Number(id),
       type: {
         equals: "delete",
         mode: "insensitive"
@@ -180,3 +182,21 @@ export const getTransactionSnapshot = async(transactionId)=>{
   })
   
 }
+
+// Check attachment
+
+export const checkAttachment = async (id) => {
+  return await prisma.transactionFile.findUnique({
+    where: {
+      id: Number(id),
+    },
+  });
+};
+
+export const deleteAttachments = async (id) => {
+  return await prisma.transactionFile.delete({
+    where: { id: Number(id) },
+  });
+};
+
+

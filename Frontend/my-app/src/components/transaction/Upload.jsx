@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import uploadIcon from "@/app/public/file-upload-svgrepo-com.svg";
+import uploadIcon from "../../app/public/file-upload-svgrepo-com.svg";
 import UploadTransaction from "../upload-transaction";
 
 const Upload = () => {
