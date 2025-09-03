@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 const ShowAttachments = ({ txn }) => {
   const [showModal, setShowModal] = useState(false);
   const [files, setFiles] = useState(txn.files || []);
+  console.log(txn?.files,"from showa")
 
   const handlePreview = (fileUrl, fileName) => {
     window.open(`/file-preview?url=${encodeURIComponent(fileUrl)}&name=${encodeURIComponent(fileName)}`, "_blank");
@@ -70,7 +71,7 @@ const ShowAttachments = ({ txn }) => {
             {/* Attachments Grid */}
             <div className="grid grid-cols-2 gap-4 max-h-72 overflow-y-auto">
               {files.map((file) => {
-                const fileUrl = `https://deno-88tn.onrender.com/${file.filePath.replace(/\\/g, "/")}`;
+                const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}`;
                 const isImage = file.fileType.startsWith("image/");
 
                 return (
