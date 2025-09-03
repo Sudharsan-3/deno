@@ -36,7 +36,7 @@ const User = () => {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
       {/* Header */}
-      <div className="bg-gradient-to-r from-pink-500 to-pink-600 shadow-lg text-white py-6 px-8 flex flex-col md:flex-row justify-between items-center">
+      {/* <div className="bg-gradient-to-r from-pink-500 to-pink-600 shadow-lg text-white py-6 px-8 flex flex-col md:flex-row justify-between items-center">
         <h1 className="text-3xl font-extrabold">Welcome, {user.name || "User"} 👋</h1>
         <button
           onClick={logout}
@@ -44,7 +44,7 @@ const User = () => {
         >
           Logout
         </button>
-      </div>
+      </div> */}
 
       {/* Welcome Banner (Only for 5 Seconds) */}
       {showWelcome && (
@@ -99,9 +99,9 @@ const User = () => {
         </div>
 
         {/* Accounts Section */}
-        <div>
+        {/* <div>
           <ViewAccounts />
-        </div>
+        </div> */}
 
         {/* Account Infos Section */}
         <AccountInfos />

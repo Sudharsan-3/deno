@@ -10,8 +10,8 @@ import { useAuth } from "../../context/AuthContext";
 const navItems = [
   { key: "Dashboard", link: "/" },
   { key: "Account", link: "/accounts" },
-  { key: "Transactions", link: "/transactions" },
-  { key: "History", link: "/history" },
+  // { key: "Transactions", link: "/transactions" },
+  // { key: "History", link: "/history" },
 ];
 
 const Header = () => {
@@ -52,7 +52,7 @@ const Header = () => {
               scrolled ? "text-white" : "text-black"
             } group-hover:text-pink-500`}
           >
-            Xlorit - TT
+            Xlorit - Ti
           </p>
         </Link>
 

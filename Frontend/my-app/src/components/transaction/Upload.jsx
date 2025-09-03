@@ -24,7 +24,7 @@ const Upload = () => {
       <div>
         <button
           onClick={openModal}
-          className="flex items-center gap-2 rounded-full px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
+          className="flex items-center gap-2 rounded-xl px-5 py-2 bg-pink-600 hover:bg-pink-700 text-white text-sm sm:text-base font-medium shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out"
         >
           <Image
             src={uploadIcon}
@@ -38,14 +38,13 @@ const Upload = () => {
       {/* Popup Modal */}
       {show && (
         <div
-          className={`fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300 ${
-            animate ? "bg-transparent border border-transparent hover:border-pink-700 bg-opacity-50 opacity-100" : "opacity-0"
-          }`}
+          className={`fixed inset-0 flex items-center justify-center z-50 transition-opacity duration-300 
+          ${animate ? "opacity-100" : "opacity-0"} 
+          bg-black/40 backdrop-blur-sm`}
         >
           <div
-            className={`bg-white rounded-2xl shadow-2xl w-[90%] max-w-lg p-6 sm:p-8 relative transform transition-all duration-300 ${
-              animate ? "scale-100 opacity-100" : "scale-95 opacity-0"
-            }`}
+            className={`bg-white rounded-2xl shadow-2xl w-[90%] max-w-lg p-6 sm:p-8 relative transform transition-all duration-300 
+            ${animate ? "scale-100 opacity-100" : "scale-95 opacity-0"}`}
           >
             {/* Close Button */}
             <button

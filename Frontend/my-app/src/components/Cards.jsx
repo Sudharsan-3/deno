@@ -4,7 +4,7 @@
 import api from "../lib/axios"
 import React, { useEffect, useState } from 'react'
 import { FaArrowUp, FaArrowDown, FaBalanceScale, FaWallet } from 'react-icons/fa'
-
+ import { useAuth } from "@/context/AuthContext";
 // Format number with commas & currency
 const formatAmount = (amount) => {
   return amount?.toLocaleString('en-IN', { 
@@ -17,6 +17,13 @@ const formatAmount = (amount) => {
 const Cards = () => {
   const [summary, setSummary] = useState(null);
   const [loading, setLoading] = useState(true);
+
+
+ 
+const { user, logout } = useAuth();
+const [showWelcome, setShowWelcome] = useState(false);
+ 
+
 
   useEffect(() => {
     const getSummary = async () => {
@@ -98,6 +105,11 @@ const Cards = () => {
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 px-4">
+      {showWelcome && (
+        <div className="bg-green-50 border border-green-300 text-green-700 text-center py-4 px-6 font-semibold text-lg shadow-md">
+          🎉 Welcome back, {user.name}! Glad to see you again.
+        </div>
+      )}
       {cards.map((card, index) => (
         <div
           key={index}

@@ -54,7 +54,7 @@ export default function UploadTransaction({ setShow }) {
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto">
+    <div className="p-6 max-w-lg mx-auto  ">
       <div className="bg-white shadow-lg rounded-2xl p-8">
         {/* <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           <FaCloudUploadAlt className="inline-block mr-2 text-blue-600 text-3xl" />
