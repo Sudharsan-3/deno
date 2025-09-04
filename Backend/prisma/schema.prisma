@@ -3,20 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String @db.VarChar(100)
-  email    String @unique @db.VarChar(50)
-  password String
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(50)
+  password  String
+  createdAt DateTime @default(now())
 
-  createdAt   DateTime @default(now())
   Account     Account[]
   Transaction Transaction[]
-
   TransactionSnapshot TransactionSnapshot[]
 }
 
@@ -39,21 +38,17 @@ model Account {
 
   createdAt     DateTime @default(now())
   createdById   Int
-  createdBy     User     @relation(fields: [createdById], references: [id])
+  createdBy     User     @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   transactions  Transaction[]
 }
 
-
-
-
 model TransactionFile {
   id            Int      @id @default(autoincrement())
   fileName      String
-  fileType      String   // e.g., CSV, IMAGE, TEXT, EXCEL
+  fileType      String
   filePath      String
   description   String?
-
   createdAt     DateTime @default(now())
 
   transactionId Int
@@ -74,28 +69,22 @@ model Transaction {
   type             String?   @default("inuse")
   createdAt        DateTime  @default(now())
   
-  createdBy        User      @relation(fields: [createdById], references: [id])
+  createdBy        User      @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById      Int
-  account          Account   @relation(fields: [accountId], references: [id])
+  account          Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
   accountId        Int
   files            TransactionFile[]
   snapshots        TransactionSnapshot[]
 
-  // NEW FIELD WITH DEFAULT VALUE
   changeReason     String?   @default("No reason provided")
-
-  // NEW FIELD - Invoice with default
   invoice          String?   @default("No invoice")
 }
 
 model TransactionSnapshot {
   id              Int       @id @default(autoincrement())
-
-  // Link to the original transaction
   transactionId   Int
   transaction     Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 
-  // Snapshot of transaction fields
   slNo            Int?
   transactionDate DateTime?
   valueDate       DateTime?
@@ -107,15 +96,134 @@ model TransactionSnapshot {
   balanceType     String?
   type            String?
 
-  // NEW FIELD - Invoice with default
   invoice         String?   @default("No invoice")
 
-  // Info about the change
   changedById     Int
-  changedBy       User       @relation(fields: [changedById], references: [id])
+  changedBy       User       @relation(fields: [changedById], references: [id], onDelete: Cascade)
   changeReason    String?
   changedAt       DateTime   @default(now())
-  
 }
+
+
+
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_URL")
+// }
+
+// model User {
+//   id       Int    @id @default(autoincrement())
+//   name     String @db.VarChar(100)
+//   email    String @unique @db.VarChar(50)
+//   password String
+
+//   createdAt   DateTime @default(now())
+//   Account     Account[]
+//   Transaction Transaction[]
+
+//   TransactionSnapshot TransactionSnapshot[]
+// }
+
+// model Account {
+//   id            Int      @id @default(autoincrement())
+//   name          String
+//   address       String
+//   accountNo     String   @unique
+//   branch        String
+//   ifsc          String
+//   micr          String
+//   startDate     DateTime?
+//   endDate       DateTime?
+
+//   custRelnNo     String? @default("None")
+//   currency       String? @default("INR")
+//   nominationRegd String? @default("None")
+//   nomineeName    String? @default("None")
+//   jointHolders   String? @default("None")
+
+//   createdAt     DateTime @default(now())
+//   createdById   Int
+//   createdBy     User     @relation(fields: [createdById], references: [id])
+
+//   transactions  Transaction[]
+// }
+
+// // hi
+
+
+// model TransactionFile {
+//   id            Int      @id @default(autoincrement())
+//   fileName      String
+//   fileType      String   // e.g., CSV, IMAGE, TEXT, EXCEL
+//   filePath      String
+//   description   String?
+
+//   createdAt     DateTime @default(now())
+
+//   transactionId Int
+//   transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+// }
+
+// model Transaction {
+//   id               Int       @id @default(autoincrement())
+//   slNo             Int?
+//   transactionDate  DateTime?
+//   valueDate        DateTime?
+//   chequeOrRef      String?
+//   description      String?
+//   amount           Int?
+//   amountType       String?
+//   balance          Int?
+//   balanceType      String?
+//   type             String?   @default("inuse")
+//   createdAt        DateTime  @default(now())
+  
+//   createdBy        User      @relation(fields: [createdById], references: [id])
+//   createdById      Int
+//   account          Account   @relation(fields: [accountId], references: [id])
+//   accountId        Int
+//   files            TransactionFile[]
+//   snapshots        TransactionSnapshot[]
+
+//   // NEW FIELD WITH DEFAULT VALUE
+//   changeReason     String?   @default("No reason provided")
+
+//   // NEW FIELD - Invoice with default
+//   invoice          String?   @default("No invoice")
+// }
+
+// model TransactionSnapshot {
+//   id              Int       @id @default(autoincrement())
+
+//   // Link to the original transaction
+//   transactionId   Int
+//   transaction     Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+//   // Snapshot of transaction fields
+//   slNo            Int?
+//   transactionDate DateTime?
+//   valueDate       DateTime?
+//   description     String?
+//   chequeOrRef     String?
+//   amount          Int?
+//   amountType      String?
+//   balance         Int?
+//   balanceType     String?
+//   type            String?
+
+//   // NEW FIELD - Invoice with default
+//   invoice         String?   @default("No invoice")
+
+//   // Info about the change
+//   changedById     Int
+//   changedBy       User       @relation(fields: [changedById], references: [id])
+//   changeReason    String?
+//   changedAt       DateTime   @default(now())
+  
+// }
 
 

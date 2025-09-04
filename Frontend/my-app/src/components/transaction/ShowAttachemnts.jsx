@@ -71,7 +71,7 @@ const ShowAttachments = ({ txn }) => {
             {/* Attachments Grid */}
             <div className="grid grid-cols-2 gap-4 max-h-72 overflow-y-auto">
               {files.map((file) => {
-                const fileUrl = `http://localhost:5000/${file.filePath.replace(/\\/g, "/")}`;
+                const fileUrl = `https://deno-88tn.onrender.com/${file.filePath.replace(/\\/g, "/")}`;
                 const isImage = file.fileType.startsWith("image/");
 
                 return (
