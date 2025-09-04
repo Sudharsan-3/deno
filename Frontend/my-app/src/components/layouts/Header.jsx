@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { FiMenu, FiX, FiCreditCard } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
@@ -10,87 +10,50 @@ import { useAuth } from "../../context/AuthContext";
 const navItems = [
   { key: "Dashboard", link: "/" },
   { key: "Account", link: "/accounts" },
-  // { key: "Transactions", link: "/transactions" },
-  // { key: "History", link: "/history" },
 ];
 
 const Header = () => {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
- 
-
-  const handleScroll = useCallback(() => {
-    setScrolled(window.scrollY > 20);
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
-
-   const { user, logout } = useAuth();
-  
+  const { user, logout } = useAuth();
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all px-3 duration-300 ${
-        scrolled ? "bg-black shadow-md" : "bg-transparent"
-      }`}
-    >
-      <div className="flex justify-between items-center py-3 mx-auto">
+    <header className="sticky top-0 z-50 px-3 backdrop-blur-md bg-black/95 shadow-md transition-all">
+      <div className="flex justify-between items-center py-3 mx-auto max-w-7xl">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <FiCreditCard
-            className={`text-2xl transition-colors duration-300 ${
-              scrolled ? "text-white" : "text-black"
-            } group-hover:text-pink-500`}
-          />
-          <p
-            className={`font-bold text-lg transition ${
-              scrolled ? "text-white" : "text-black"
-            } group-hover:text-pink-500`}
-          >
+          <FiCreditCard className="text-2xl text-pink-500 group-hover:text-pink-400 transition" />
+          <p className="font-bold text-lg text-white group-hover:text-pink-400 transition">
             Xlorit - Ti
           </p>
         </Link>
 
         <div className="flex gap-6 items-center">
           {/* Desktop Menu */}
-          <nav className="hidden md:flex gap-6 items-center">
+          <nav className="hidden md:flex gap-4 items-center">
             {navItems.map((item) => (
               <Link key={item.key} href={item.link}>
-                <p
-                  className={`px-3 py-1.5 rounded-md font-medium transition ${
-                    scrolled
-                      ? "bg-pink-500 text-white hover:bg-pink-600"
-                      : "bg-white text-black hover:border hover:border-pink-400"
-                  }`}
-                >
+                <p className="px-4 py-2 rounded-lg font-medium text-white bg-gradient-to-r from-pink-600 to-pink-500 hover:from-pink-500 hover:to-pink-400 transition-all shadow-md hover:shadow-lg">
                   {item.key}
                 </p>
               </Link>
             ))}
           </nav>
 
-          {/* User Icon for Desktop */}
+          {/* User Icon (Desktop) */}
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className={`hidden md:block p-2 rounded-full transition ${
-              scrolled
-                ? "bg-pink-500 hover:bg-pink-600 text-white"
-                : "bg-white hover:border hover:border-pink-400"
-            }`}
+            className="hidden md:block p-2 rounded-full bg-pink-600 hover:bg-pink-500 transition shadow-md hover:shadow-lg"
           >
-            <img src={userIcon.src} alt="User icon" className="w-5" />
+            <img src={userIcon.src} alt="User icon" className="w-6" />
           </button>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className={`md:hidden p-2 ${scrolled ? "text-white" : "text-gray-700"}`}
+          className="md:hidden p-2 text-white"
           aria-label="Toggle menu"
         >
           {menuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -105,11 +68,11 @@ const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="md:hidden flex flex-col gap-2 px-4 pb-3 bg-white border-t shadow-md"
+            className="md:hidden flex flex-col gap-2 px-4 pb-3 bg-black/95 border-t border-gray-700 shadow-lg"
           >
             {navItems.map((item) => (
               <Link key={item.key} href={item.link} onClick={() => setMenuOpen(false)}>
-                <p className="px-3 py-2 rounded-lg bg-gray-50 hover:bg-pink-100 hover:text-pink-600 font-medium transition">
+                <p className="px-3 py-2 rounded-lg bg-gray-800 text-white hover:bg-pink-600 font-medium transition">
                   {item.key}
                 </p>
               </Link>
@@ -121,7 +84,7 @@ const Header = () => {
                 setMenuOpen(false);
                 setUserMenuOpen(true);
               }}
-              className="px-3 py-2 rounded-lg bg-gray-50 hover:bg-pink-100 hover:text-pink-600 font-medium transition text-left"
+              className="px-3 py-2 rounded-lg bg-gray-800 text-white hover:bg-pink-600 font-medium transition text-left"
             >
               User
             </button>
@@ -129,7 +92,7 @@ const Header = () => {
         )}
       </AnimatePresence>
 
-      {/* ✅ User Menu Popup */}
+      {/* User Menu Popup */}
       <AnimatePresence>
         {userMenuOpen && (
           <motion.div
@@ -137,28 +100,32 @@ const Header = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 50 }}
             transition={{ duration: 0.3 }}
-            className="fixed top-16 right-4 w-64 bg-white shadow-lg rounded-xl p-4 z-50 border"
+            className="fixed top-16 right-4 w-64 bg-black/95 backdrop-blur-md shadow-lg rounded-xl p-4 z-50 border border-gray-700"
           >
             <div className="flex justify-between items-center mb-3">
-              <h3 className="font-semibold text-lg">Profile</h3>
-              <button onClick={() => setUserMenuOpen(false)} className="text-gray-500 hover:text-black">
+              <h3 className="font-semibold text-lg text-white">Profile</h3>
+              <button
+                onClick={() => setUserMenuOpen(false)}
+                className="text-gray-400 hover:text-white transition"
+              >
                 <FiX size={20} />
               </button>
             </div>
 
             <div className="mb-4">
-              <p className="font-medium">{user?.name}</p>
-              <p className="text-gray-500 text-sm">{user?.email}</p>
+              <p className="font-medium text-white">{user?.name}</p>
+              <p className="text-gray-400 text-sm">{user?.email}</p>
             </div>
 
             <div className="flex flex-col gap-2">
               <Link href={"/user"}>
-                            <button className="text-left px-3 py-2 rounded-md hover:bg-gray-100">Settings</button>
-
+                <button className="text-left px-3 py-2 rounded-md text-white hover:bg-gray-800 transition">
+                  Settings
+                </button>
               </Link>
               <button
                 onClick={logout}
-                className="text-left px-3 py-2 rounded-md text-red-500 hover:bg-red-100"
+                className="text-left px-3 py-2 rounded-md text-red-400 hover:bg-red-600 hover:text-white transition"
               >
                 Logout
               </button>

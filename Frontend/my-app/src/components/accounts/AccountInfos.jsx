@@ -74,7 +74,7 @@ const AccountInfos = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-10">
       {/* Header */}
-      <h1 className="text-4xl font-extrabold  mb-8 text-black">
+      <h1 className="text-4xl font-semibold  mb-8 text-black">
         Account Overview
       </h1>
 

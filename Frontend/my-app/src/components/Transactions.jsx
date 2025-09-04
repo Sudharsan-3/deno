@@ -341,7 +341,7 @@ const Transactions = () => {
         />
       )}
 
-      <div className="flex flex-col items-center mt-6">
+      <div className="flex flex-col items-center my-6 ">
         {/* Toggle Button */}
         <button
           onClick={() => setHistoryShow(!historyShow)}
